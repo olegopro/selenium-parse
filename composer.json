@@ -1,0 +1,6 @@
+{
+    "require": {
+        "php-webdriver/webdriver": "^1.12",
+        "sapistudio/seleniumstealth": "^1.0"
+    }
+}
