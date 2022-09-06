@@ -15,9 +15,7 @@ use GuzzleHttp\Client;
 
 class RegisterPage extends Page
 {
-
 	private $numberResponseId;
-
 
 	public function fillUsername(string $text)
 	{

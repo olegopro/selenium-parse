@@ -11,7 +11,6 @@ class MainActivator
 	 */
 	protected $service;
 
-
 	/**
 	 * MainActivator constructor
 	 *
@@ -84,6 +83,4 @@ class MainActivator
 	{
 		return $this->getService()->getStatus($id);
 	}
-
-
 }
