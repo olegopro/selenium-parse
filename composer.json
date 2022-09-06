@@ -1,14 +1,15 @@
 {
-    "require": {
-        "php-webdriver/webdriver": "^1.12",
-        "guzzlehttp/guzzle": "^7.4",
-      "ext-zip": "*",
-        "vlucas/phpdotenv": "^5.4"
-    },
-
-    "autoload": {
-        "psr-4": {
-            "App\\": "src/"
-        }
+  "license": "MIT",
+  "name": "olegopro/selenium-parse",
+  "require": {
+    "php-webdriver/webdriver": "^1.12",
+    "guzzlehttp/guzzle": "^7.4",
+    "ext-zip": "*",
+    "vlucas/phpdotenv": "^5.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
     }
+  }
 }
