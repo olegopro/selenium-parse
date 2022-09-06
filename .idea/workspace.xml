@@ -1,59 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="21ddd0d8-2ee7-4a83-aa94-92a01dded1b6" name="Changes" comment="Добавил ввод телефона, довел скрипт до конца">
-      <change afterPath="$PROJECT_DIR$/.env" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/env" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/demo.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/index.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Driver/Driver.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Helpers/humanSimulations.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Projects/MailRu/Helpers/CheckExistAccount.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Projects/MailRu/Pages/MainPage.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Projects/MailRu/Pages/Page.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Projects/MailRu/Pages/RegisterPage.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Projects/MailRu/Tasks/RegisterAccount.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/SmsAPI/MainActivator.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/SmsAPI/ServiceInterface.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/SmsAPI/Services/smsAcktiwator.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/selenium-parse.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/selenium-parse.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/geckodriver" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_classmap.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_classmap.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_files.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_files.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_psr4.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_psr4.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_static.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_static.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/composer/installed.json" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/installed.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/composer/installed.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/installed.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/php-webdriver/webdriver/lib/WebDriverPoint.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/php-webdriver/webdriver/lib/WebDriverPoint.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/sapistudio/seleniumstealth/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/sapistudio/seleniumstealth/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/sapistudio/seleniumstealth/composer.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/sapistudio/seleniumstealth/js/chrome.app.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/sapistudio/seleniumstealth/js/chrome.csi.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/sapistudio/seleniumstealth/js/chrome.loadTimes.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/sapistudio/seleniumstealth/js/chrome.runtime.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/sapistudio/seleniumstealth/js/hairline.fix.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/sapistudio/seleniumstealth/js/hook_remove_cdc_props.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/sapistudio/seleniumstealth/js/iframe.contentWindow.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/sapistudio/seleniumstealth/js/max_touch_points.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/sapistudio/seleniumstealth/js/media.codecs.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/sapistudio/seleniumstealth/js/navigator.brave.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/sapistudio/seleniumstealth/js/navigator.languages.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/sapistudio/seleniumstealth/js/navigator.permissions.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/sapistudio/seleniumstealth/js/navigator.plugins.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/sapistudio/seleniumstealth/js/navigator.vendor.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/sapistudio/seleniumstealth/js/navigator.webdriver.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/sapistudio/seleniumstealth/js/utils.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/sapistudio/seleniumstealth/js/webgl.vendor.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/sapistudio/seleniumstealth/js/window.outerdimensions.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/sapistudio/seleniumstealth/src/SeleniumStealth.php" beforeDir="false" />
+    <list default="true" id="21ddd0d8-2ee7-4a83-aa94-92a01dded1b6" name="Changes" comment="Доработал мелочи">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -173,8 +122,16 @@
       <workItem from="1662400420017" duration="192000" />
       <workItem from="1662400741374" duration="1072000" />
       <workItem from="1662424107785" duration="1530000" />
-      <workItem from="1662425976656" duration="2858000" />
+      <workItem from="1662425976656" duration="3232000" />
     </task>
+    <task id="LOCAL-00001" summary="Доработал мелочи">
+      <created>1662428939752</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1662428939752</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -193,7 +150,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Добавил ввод телефона, довел скрипт до конца" />
-    <option name="LAST_COMMIT_MESSAGE" value="Добавил ввод телефона, довел скрипт до конца" />
+    <MESSAGE value="Доработал мелочи" />
+    <option name="LAST_COMMIT_MESSAGE" value="Доработал мелочи" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
