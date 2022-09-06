@@ -23,6 +23,7 @@ application/logs/*
 /vendor/
 
 vendor
+vendor/
 
 ### CodeIgniter Patch ###
 
