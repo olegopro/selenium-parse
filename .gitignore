@@ -22,6 +22,8 @@ application/logs/*
 !application/logs/.htaccess
 /vendor/
 
+vendor
+
 ### CodeIgniter Patch ###
 
 ### Composer ###
