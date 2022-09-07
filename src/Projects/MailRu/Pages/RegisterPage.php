@@ -19,6 +19,7 @@ class RegisterPage extends Page
 
 	public function fillUsername(string $text)
 	{
+		echo __FUNCTION__ . ' Вводим имя' . PHP_EOL;
 		$element = $this->waitForVisible(
 			$this->driver,
 			WebDriverBy::xpath("//input[@name='fname']")
@@ -37,6 +38,7 @@ class RegisterPage extends Page
 
 	public function fillLastname(string $text)
 	{
+		echo __FUNCTION__ . ' Вводим фамилию' . PHP_EOL;
 		$element = $this->waitForVisible(
 			$this->driver,
 			WebDriverBy::xpath("//input[@name='lname']")
@@ -55,6 +57,7 @@ class RegisterPage extends Page
 
 	public function selectDayBirthday(int $day)
 	{
+		echo __FUNCTION__ . ' Выбираем день рождения' . PHP_EOL;
 		$elementList = $this->waitForVisible(
 			$this->driver,
 			WebDriverBy::xpath("//form[@data-test-id='signup-first-step']//span[text()='День']")
@@ -62,7 +65,6 @@ class RegisterPage extends Page
 
 		sleep(rand(0, 1));
 		$elementList->click();
-
 
 		$elementItem = $this->waitForVisible(
 			$this->driver,
@@ -78,6 +80,7 @@ class RegisterPage extends Page
 
 	public function selectMonthBirthday(string $month)
 	{
+		echo __FUNCTION__ . ' Выбираем месяц рождения' . PHP_EOL;
 		$elementList = $this->waitForVisible(
 			$this->driver,
 			WebDriverBy::xpath("//form[@data-test-id='signup-first-step']//span[text()='Месяц']")
@@ -85,7 +88,6 @@ class RegisterPage extends Page
 
 		sleep(rand(0, 1));
 		$elementList->click();
-
 
 		$elementItem = $this->waitForVisible(
 			$this->driver,
@@ -101,6 +103,7 @@ class RegisterPage extends Page
 
 	public function selectYearBirthday(int $year)
 	{
+		echo __FUNCTION__ . ' Выбираем год рождения' . PHP_EOL;
 		$elementList = $this->waitForVisible(
 			$this->driver,
 			WebDriverBy::xpath("//form[@data-test-id='signup-first-step']//span[text()='Год']")
@@ -108,7 +111,6 @@ class RegisterPage extends Page
 
 		sleep(rand(0, 1));
 		$elementList->click();
-
 
 		$elementItem = $this->waitForVisible(
 			$this->driver,
@@ -124,6 +126,7 @@ class RegisterPage extends Page
 
 	public function selectGender(string $gender)
 	{
+		echo __FUNCTION__ . ' Выбираем пол' . PHP_EOL;
 		switch ($gender) {
 			case 'male':
 				$element = $this->waitForVisible(
@@ -153,6 +156,7 @@ class RegisterPage extends Page
 
 	public function fillEmailName(string $name)
 	{
+		echo __FUNCTION__ . ' Вводим имя почты' . PHP_EOL;
 		$element = $this->waitForVisible(
 			$this->driver,
 			WebDriverBy::xpath("//input[@name='username']")
@@ -168,6 +172,7 @@ class RegisterPage extends Page
 
 	public function fillPassword(string $password)
 	{
+		echo __FUNCTION__ . ' Вводим пароль' . PHP_EOL;
 		$element = $this->waitForVisible(
 			$this->driver,
 			WebDriverBy::xpath("//input[@name='password']")
@@ -183,6 +188,7 @@ class RegisterPage extends Page
 
 	public function fillPasswordConfirm(string $password)
 	{
+		echo __FUNCTION__ . ' Вводим подтверждение пароля' . PHP_EOL;
 		$element = $this->waitForVisible(
 			$this->driver,
 			WebDriverBy::xpath("//input[@name='repeatPassword']")
@@ -198,6 +204,7 @@ class RegisterPage extends Page
 
 	public function fillRecoveryEmail(string $recoveryEmail)
 	{
+		echo __FUNCTION__ . ' Вводим резервную почту' . PHP_EOL;
 		$switchToEmail = $this->waitForVisible(
 			$this->driver,
 			WebDriverBy::xpath("//a[@data-test-id='phone-number-switch-link']")
@@ -207,7 +214,6 @@ class RegisterPage extends Page
 
 		sleep(rand(0, 3));
 		$switchToEmail->click();
-
 
 		$extraEmail = $this->waitForVisible(
 			$this->driver,
@@ -225,6 +231,7 @@ class RegisterPage extends Page
 
 	public function fillTelephone()
 	{
+		echo __FUNCTION__ . ' Вводим номер телефона' . PHP_EOL;
 		$element = $this->waitForVisible(
 			$this->driver,
 			WebDriverBy::xpath("//input[@data-test-id='phone-input']")
@@ -232,7 +239,6 @@ class RegisterPage extends Page
 
 		$this->driver->action()->moveToElement($element, rand(1, 15), rand(1, 15));
 		$element->click();
-
 
 		$client = new Client();
 		$smsAktiwator = new MainActivator(new smsAcktiwator($_ENV['SMS_SERVICE_API_KEY']), $client);
@@ -243,7 +249,6 @@ class RegisterPage extends Page
 		$numberResponse = [
 			'status' => $responseToArray[0]
 		];
-
 
 		switch ($numberResponse['status']) {
 			case 'ACCESS_NUMBER':
@@ -269,7 +274,7 @@ class RegisterPage extends Page
 
 		//$element->sendKeys();
 		$this->driver->getKeyboard()
-		             ->sendKeys([WebDriverKeys::BACKSPACE]);
+					 ->sendKeys([WebDriverKeys::BACKSPACE]);
 
 		$this->humanInputText($element, $numberResponse['number']);
 
@@ -278,6 +283,7 @@ class RegisterPage extends Page
 
 	public function clickCreate()
 	{
+		echo __FUNCTION__ . ' Нажимаем создать аккаунт' . PHP_EOL;
 		$element = $this->waitForVisible(
 			$this->driver,
 			WebDriverBy::xpath("//form[@data-test-id='signup-first-step']/button[@data-test-id='first-step-submit']")
@@ -286,9 +292,7 @@ class RegisterPage extends Page
 		$this->driver->action()->moveToElement($element, rand(1, 15), rand(1, 15));
 		$element->click();
 
-
 		$this->solvingCaptcha();
-
 	}
 
 	private function solvingCaptcha()
@@ -296,14 +300,13 @@ class RegisterPage extends Page
 		$captcha_api_key = $_ENV['CAPTCHA_KEY'];
 
 		try {
-
-			//ищем существование капчи
+			echo __FUNCTION__ . ' Нашли капчу' . PHP_EOL;
 			$element = $this->waitForVisible(
 				$this->driver,
 				WebDriverBy::xpath("//h3[@data-test-id='verification-step-header-recaptcha']"),
 				3
 			);
-			echo __METHOD__ . ' Нашли капчу' . PHP_EOL;
+			echo __FUNCTION__ . ' Нашли капчу' . PHP_EOL;
 
 			sleep(1);
 			$this->driver->executeScript(
@@ -354,12 +357,11 @@ class RegisterPage extends Page
 			'
 			);
 
-			echo __METHOD__ . ' Ищем callback' . PHP_EOL;
+			echo __FUNCTION__ . ' Ищем callback' . PHP_EOL;
 
 			sleep(5);
-			echo __METHOD__ . ' Возвращаем последний callback' . PHP_EOL;
+			echo __FUNCTION__ . ' Возвращаем последний callback' . PHP_EOL;
 			$callback = $this->driver->executeScript('return findRecaptchaClients()');
-
 
 			$lastCallback = array_pop($callback);
 
@@ -368,15 +370,13 @@ class RegisterPage extends Page
 			$pageurl = strtok($lastCallback['pageurl'], '?');
 			$sitekey = $lastCallback['sitekey'];
 
-			var_dump(__METHOD__ . $callbackName) . PHP_EOL;
-
+			var_dump(__FUNCTION__ . $callbackName) . PHP_EOL;
 
 			$client = new Client();
 			$response = $client->request('GET', "https://rucaptcha.com/in.php?key=$captcha_api_key&method=userrecaptcha&googlekey=$sitekey&pageurl=$pageurl");
 
 			sleep(10);
 			var_dump($response->getBody()->__toString()) . PHP_EOL;
-
 
 			$responseKey = explode('|', $response->getBody()->__toString());
 
@@ -404,14 +404,11 @@ class RegisterPage extends Page
 
 			sleep(3);
 			$this->fillReceivedSms();
-			echo __METHOD__ . ' Пробуем отправить смс еще раз после капчи' . PHP_EOL;
-
+			echo __FUNCTION__ . ' Пробуем отправить смс еще раз после капчи' . PHP_EOL;
 		} catch (NoSuchElementException $e) {
-
-			echo __METHOD__ . ' Captcha не обнаружена идем дальше' . PHP_EOL;
-			echo __METHOD__ . ' Ищем форму для получения СМС' . PHP_EOL;
+			echo __FUNCTION__ . ' Captcha не обнаружена идем дальше' . PHP_EOL;
+			echo __FUNCTION__ . ' Ищем форму для получения СМС' . PHP_EOL;
 			$this->fillReceivedSms();
-
 		}
 	}
 
@@ -438,21 +435,18 @@ class RegisterPage extends Page
 
 			$getStatus = $smsAktiwator->getStatus($this->numberResponseId);
 
-
 			$timer = 0;
 			while ($getStatus === 'STATUS_WAIT_CODE') {
 				$getStatus = $smsAktiwator->getStatus($this->numberResponseId);
 
-
-				echo __METHOD__ . ' Текущий статус смс: ' . $getStatus . PHP_EOL;
+				echo __FUNCTION__ . ' Текущий статус смс: ' . $getStatus . PHP_EOL;
 				sleep(30);
 
 				$timer += 30;
 
 				if ($timer === 90) {
 					try {
-
-						echo __METHOD__ . ' Пытаемся получить смс код повторно' . PHP_EOL;
+						echo __FUNCTION__ . ' Пытаемся получить смс код повторно' . PHP_EOL;
 						$element = $this->waitForVisible(
 							$this->driver,
 							WebDriverBy::xpath("//a[@data-test-id='resend-code-link']"),
@@ -463,11 +457,10 @@ class RegisterPage extends Page
 
 						sleep(rand(0, 3));
 						$element->click();
-
 					} catch (Exception $exception) {
 						echo $exception->getMessage() . PHP_EOL;
 
-						echo __METHOD__ . ' Проверяем наличие капчи' . PHP_EOL;
+						echo __FUNCTION__ . ' Проверяем наличие капчи' . PHP_EOL;
 						$this->solvingCaptcha();
 					}
 				}
@@ -476,26 +469,25 @@ class RegisterPage extends Page
 			$getStatusResponse = explode(':', $getStatus);
 
 			if ($getStatusResponse[0] === 'STATUS_OK') {
-				echo __METHOD__ . ' СМС: ' . $getStatusResponse[1] . PHP_EOL;
+				echo __FUNCTION__ . ' СМС: ' . $getStatusResponse[1] . PHP_EOL;
 			}
 
-			echo __METHOD__ . ' Вводим СМС' . PHP_EOL;
+			echo __FUNCTION__ . ' Вводим СМС' . PHP_EOL;
 			$this->humanInputText($element, $getStatusResponse[1]);
 			$this->clickResume();
-
 		} catch (NoSuchElementException $exception) {
-			echo __METHOD__ . ' Форма для получения смс кода не найдена. Идем дальше' . PHP_EOL;
+			echo __FUNCTION__ . ' Форма для получения смс кода не найдена. Идем дальше' . PHP_EOL;
 			$this->clickResume();
 		}
 
-		echo __METHOD__ . ' Запускаем проверку на капчу еще раз' . PHP_EOL;
+		echo __FUNCTION__ . ' Запускаем проверку на капчу еще раз' . PHP_EOL;
 		$this->solvingCaptcha();
 	}
 
 	private function clickResume()
 	{
 		try {
-			echo __METHOD__ . ' Ищем кнопку продолжить' . PHP_EOL;
+			echo __FUNCTION__ . ' Ищем кнопку продолжить' . PHP_EOL;
 			$element = $this->waitForVisible(
 				$this->driver,
 				WebDriverBy::xpath("//button[@data-test-id='verification-next-button']"),
@@ -504,15 +496,13 @@ class RegisterPage extends Page
 
 			$this->driver->action()->moveToElement($element, rand(1, 15), rand(1, 15));
 			$element->click();
-
 		} catch (NoSuchElementException $exception) {
-
-			echo __METHOD__ . ' Не нашли кнопку продолжить' . PHP_EOL;
+			echo __FUNCTION__ . ' Не нашли кнопку продолжить' . PHP_EOL;
 
 			$currentUrl = strtok($this->driver->getCurrentURL(), '?');
-			echo __METHOD__ . ' Текущая страница: ' . $currentUrl . PHP_EOL;
+			echo __FUNCTION__ . ' Текущая страница: ' . $currentUrl . PHP_EOL;
 			if ($currentUrl === 'https://e.mail.ru/inbox') {
-				echo __METHOD__ . ' Выполняем стартовые настройки' . PHP_EOL;
+				echo __FUNCTION__ . ' Выполняем стартовые настройки' . PHP_EOL;
 				$this->setMinimumConfig();
 			}
 		}
@@ -531,7 +521,6 @@ class RegisterPage extends Page
 			sleep(rand(2, 3));
 			$buttonStart->click();
 
-
 			$buttonEmailBoxType = $this->waitForVisible(
 				$this->driver,
 				WebDriverBy::xpath("//button[@data-test-id='onboarding-button-step']")
@@ -541,7 +530,6 @@ class RegisterPage extends Page
 
 			sleep(rand(1, 3));
 			$buttonEmailBoxType->click();
-
 
 			$buttonComplete = $this->waitForVisible(
 				$this->driver,
@@ -564,7 +552,6 @@ class RegisterPage extends Page
 			$buttonCancelReserveEmail->click();
 
 			exit('Аккаунт успешно создан!');
-
 		} catch (Exception $exception) {
 			echo $exception->getMessage() . PHP_EOL;
 		}
@@ -573,14 +560,14 @@ class RegisterPage extends Page
 	private function checkIfNeedCallBypass()
 	{
 		try {
-			echo __METHOD__ . ' Ищем форму "Мы Вам звоним"' . PHP_EOL;
+			echo __FUNCTION__ . ' Ищем форму "Мы Вам звоним"' . PHP_EOL;
 			$element = $this->waitForVisible(
 				$this->driver,
 				WebDriverBy::xpath("//h3[@data-test-id='verification-step-header-callui']"),
 				2
 			);
 
-			echo __METHOD__ . ' Нашли форму "Мы Вам звоним" ждем 60 секунд';
+			echo __FUNCTION__ . ' Нашли форму "Мы Вам звоним" ждем 60 секунд';
 			sleep(rand(60, 70));
 			$elementGoNext = $this->waitForVisible(
 				$this->driver,
@@ -592,8 +579,7 @@ class RegisterPage extends Page
 			sleep(rand(0, 1));
 			$elementGoNext->click();
 		} catch (NoSuchElementException $e) {
-			echo __METHOD__ . ' Форма "Мы Вам звоним не найдена" идём дальше' . PHP_EOL;
+			echo __FUNCTION__ . ' Форма "Мы Вам звоним не найдена" идём дальше' . PHP_EOL;
 		}
-
 	}
 }
