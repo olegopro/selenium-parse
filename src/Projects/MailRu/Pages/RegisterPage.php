@@ -264,13 +264,13 @@ class RegisterPage extends Page
 				break;
 
 			case 'NO_NUMBERS':
-				echo 'Нет номеров';
-				exit();
+				throw new Exception('Нет номеров');
 
 			case 'NO_BALANCE':
-				echo 'Нет денег на балансе';
-				exit();
+				throw new Exception('Нет денег на балансе');
 		}
+
+		$GLOBALS['telephone'] = $numberResponse['number'];
 
 		//$element->sendKeys();
 		$this->driver->getKeyboard()
@@ -300,7 +300,6 @@ class RegisterPage extends Page
 		$captcha_api_key = $_ENV['CAPTCHA_KEY'];
 
 		try {
-			echo __FUNCTION__ . ' Нашли капчу' . PHP_EOL;
 			$element = $this->waitForVisible(
 				$this->driver,
 				WebDriverBy::xpath("//h3[@data-test-id='verification-step-header-recaptcha']"),
