@@ -270,7 +270,8 @@ class RegisterPage extends Page
 				throw new Exception('Нет денег на балансе');
 		}
 
-		$GLOBALS['telephone'] = $numberResponse['number'];
+		global $telephone;
+		$telephone = $numberResponse['number'];
 
 		//$element->sendKeys();
 		$this->driver->getKeyboard()
@@ -293,6 +294,8 @@ class RegisterPage extends Page
 		$element->click();
 
 		$this->solvingCaptcha();
+
+		return $this;
 	}
 
 	private function solvingCaptcha()
@@ -400,13 +403,10 @@ class RegisterPage extends Page
 
 			sleep(3);
 			$this->driver->executeScript($callbackName);
+			$this->clickResume();
 
-			sleep(3);
-			$this->fillReceivedSms();
-			echo __FUNCTION__ . ' Пробуем отправить смс еще раз после капчи' . PHP_EOL;
 		} catch (NoSuchElementException $e) {
 			echo __FUNCTION__ . ' Captcha не обнаружена идем дальше' . PHP_EOL;
-			echo __FUNCTION__ . ' Ищем форму для получения СМС' . PHP_EOL;
 			$this->fillReceivedSms();
 		}
 	}
@@ -474,13 +474,11 @@ class RegisterPage extends Page
 			echo __FUNCTION__ . ' Вводим СМС' . PHP_EOL;
 			$this->humanInputText($element, $getStatusResponse[1]);
 			$this->clickResume();
+
 		} catch (NoSuchElementException $exception) {
 			echo __FUNCTION__ . ' Форма для получения смс кода не найдена. Идем дальше' . PHP_EOL;
-			$this->clickResume();
 		}
 
-		echo __FUNCTION__ . ' Запускаем проверку на капчу еще раз' . PHP_EOL;
-		$this->solvingCaptcha();
 	}
 
 	private function clickResume()
@@ -497,63 +495,63 @@ class RegisterPage extends Page
 			$element->click();
 		} catch (NoSuchElementException $exception) {
 			echo __FUNCTION__ . ' Не нашли кнопку продолжить' . PHP_EOL;
-
-			$currentUrl = strtok($this->driver->getCurrentURL(), '?');
-			echo __FUNCTION__ . ' Текущая страница: ' . $currentUrl . PHP_EOL;
-			if ($currentUrl === 'https://e.mail.ru/inbox') {
-				echo __FUNCTION__ . ' Выполняем стартовые настройки' . PHP_EOL;
-				$this->setMinimumConfig();
-			}
 		}
 	}
 
-	private function setMinimumConfig()
+	public function setMinimumConfig()
 	{
+		$currentUrl = strtok($this->driver->getCurrentURL(), '?');
+		echo __FUNCTION__ . ' Текущая страница: ' . $currentUrl . PHP_EOL;
+
 		try {
-			$buttonStart = $this->waitForVisible(
-				$this->driver,
-				WebDriverBy::xpath("//button[@data-test-id='onboarding-button-start']")
-			);
+			if ($currentUrl === 'https://e.mail.ru/inbox') {
+				$buttonStart = $this->waitForVisible(
+					$this->driver,
+					WebDriverBy::xpath("//button[@data-test-id='onboarding-button-start']")
+				);
 
-			$this->driver->action()->moveToElement($buttonStart, rand(1, 15), rand(1, 15));
+				$this->driver->action()->moveToElement($buttonStart, rand(1, 15), rand(1, 15));
 
-			sleep(rand(2, 3));
-			$buttonStart->click();
+				sleep(rand(2, 3));
+				$buttonStart->click();
 
-			$buttonEmailBoxType = $this->waitForVisible(
-				$this->driver,
-				WebDriverBy::xpath("//button[@data-test-id='onboarding-button-step']")
-			);
+				$buttonEmailBoxType = $this->waitForVisible(
+					$this->driver,
+					WebDriverBy::xpath("//button[@data-test-id='onboarding-button-step']")
+				);
 
-			$this->driver->action()->moveToElement($buttonEmailBoxType, rand(1, 15), rand(1, 15));
+				$this->driver->action()->moveToElement($buttonEmailBoxType, rand(1, 15), rand(1, 15));
 
-			sleep(rand(1, 3));
-			$buttonEmailBoxType->click();
+				sleep(rand(1, 3));
+				$buttonEmailBoxType->click();
 
-			$buttonComplete = $this->waitForVisible(
-				$this->driver,
-				WebDriverBy::xpath("//button[@data-test-id='onboarding-button-complete']")
-			);
+				$buttonComplete = $this->waitForVisible(
+					$this->driver,
+					WebDriverBy::xpath("//button[@data-test-id='onboarding-button-complete']")
+				);
 
-			$this->driver->action()->moveToElement($buttonComplete, rand(1, 15), rand(1, 15));
+				$this->driver->action()->moveToElement($buttonComplete, rand(1, 15), rand(1, 15));
 
-			sleep(rand(1, 3));
-			$buttonComplete->click();
+				sleep(rand(1, 3));
+				$buttonComplete->click();
 
-			$buttonCancelReserveEmail = $this->waitForVisible(
-				$this->driver,
-				WebDriverBy::xpath("//button[@data-test-id='recovery-addEmail-cancel']")
-			);
+				$buttonCancelReserveEmail = $this->waitForVisible(
+					$this->driver,
+					WebDriverBy::xpath("//button[@data-test-id='recovery-addEmail-cancel']")
+				);
 
-			$this->driver->action()->moveToElement($buttonCancelReserveEmail, rand(1, 15), rand(1, 15));
+				$this->driver->action()->moveToElement($buttonCancelReserveEmail, rand(1, 15), rand(1, 15));
 
-			sleep(rand(1, 3));
-			$buttonCancelReserveEmail->click();
+				sleep(rand(1, 3));
+				$buttonCancelReserveEmail->click();
 
-			exit('Аккаунт успешно создан!');
+				echo 'Аккаунт успешно создан!' . PHP_EOL;
+			}
+
 		} catch (Exception $exception) {
 			echo $exception->getMessage() . PHP_EOL;
 		}
+
 	}
 
 	private function checkIfNeedCallBypass()
