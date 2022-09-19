@@ -167,6 +167,23 @@ class RegisterPage extends Page
 
 		$this->humanInputText($element, $name);
 
+		try {
+			$element = $this->waitForVisible(
+				$this->driver,
+				WebDriverBy::xpath("//div[@data-test-id='exists']")
+			);
+
+			echo __FUNCTION__ . 'Аккаунт уже существует' . PHP_EOL;
+			$newName = $name . rand(10, 99);
+
+			echo 'Пробуем ввести новый логин';
+			$this->fillEmailName($newName);
+
+		} catch (Exception $exception) {
+			echo __FUNCTION__ . 'Ввели логин' . PHP_EOL;
+			// echo $exception->getMessage() . PHP_EOL;
+		}
+
 		return $this;
 	}
 
