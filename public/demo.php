@@ -17,10 +17,13 @@ use Facebook\WebDriver\WebDriverElement;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\WebDriverPoint;
 
+require '../vendor/autoload.php';
+
 $serverUrl = 'http://10.37.129.2:4444';
 
 $chromeOptions = new ChromeOptions();
-$chromeOptions->addArguments(['window-size=1920,1080']);
+// $chromeOptions->addArguments(['start-maximized']);
+$chromeOptions->addArguments(['window-size=800,600']);
 
 $capabilities = DesiredCapabilities::chrome();
 $capabilities->setCapability(ChromeOptions::CAPABILITY_W3C, $chromeOptions);
@@ -30,14 +33,13 @@ $devTools = new ChromeDevToolsDriver($driver);
 
 $devTools->execute(
 	'Network.setUserAgentOverride',
-	['userAgent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36']
+	['userAgent' => 'Mozilla/5.0 (X11; Linux x86_64; rv:83.0) Gecko/20100101 Firefox/83.0']
 );
 
 $driver->get("https://bot.sannysoft.com/");
-$driver->get("https://browserleaks.com/webgl");
-$driver->get("https://browserleaks.com/javascript");
-$driver->get("https://pixelscan.net/");
-
+// $driver->get("https://browserleaks.com/webgl");
+// $driver->get("https://browserleaks.com/javascript");
+// $driver->get("https://pixelscan.net/");
 
 var_dump($driver->getCurrentURL()) . PHP_EOL;
 

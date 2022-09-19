@@ -13,7 +13,7 @@ trait humanSimulations
 
 	protected function humanInputText($element, $text)
 	{
-		foreach (str_split($text) as $item) {
+		foreach (mb_str_split($text) as $item) {
 			$element->sendKeys($item);
 			sleep(rand(0, 1));
 		}
