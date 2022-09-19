@@ -477,6 +477,14 @@ class RegisterPage extends Page
 
 		} catch (NoSuchElementException $exception) {
 			echo __FUNCTION__ . ' Форма для получения смс кода не найдена. Идем дальше' . PHP_EOL;
+			try {
+				echo __FUNCTION__ . 'Ищем кнопку "Продолжить"' . PHP_EOL;
+				$this->clickResume();
+			} catch (Exception $exception) {
+				echo $exception->getMessage();
+				echo __FUNCTION__ . 'Кнопка "Продолжить" не найдена' . PHP_EOL;
+				$this->setMinimumConfig();
+			}
 		}
 
 	}
@@ -550,8 +558,9 @@ class RegisterPage extends Page
 
 		} catch (Exception $exception) {
 			echo $exception->getMessage() . PHP_EOL;
+			echo 'Пробуем найти капчу' . PHP_EOL;
+			$this->solvingCaptcha();
 		}
-
 	}
 
 	private function checkIfNeedCallBypass()
