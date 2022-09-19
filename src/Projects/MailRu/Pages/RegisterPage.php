@@ -170,7 +170,7 @@ class RegisterPage extends Page
 		try {
 			$element = $this->waitForVisible(
 				$this->driver,
-				WebDriverBy::xpath("//div[@data-test-id='exists']")
+				WebDriverBy::xpath("//*[@data-test-id='exists']")
 			);
 
 			echo __FUNCTION__ . 'Аккаунт уже существует' . PHP_EOL;
