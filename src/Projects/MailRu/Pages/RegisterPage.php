@@ -173,14 +173,14 @@ class RegisterPage extends Page
 				WebDriverBy::xpath("//*[@data-test-id='exists']")
 			);
 
-			echo __FUNCTION__ . 'Аккаунт уже существует' . PHP_EOL;
-			$newName = $name . rand(10, 99);
+			echo __FUNCTION__ . ' Аккаунт уже существует' . PHP_EOL;
+			$name . rand(10, 99);
 
-			echo 'Пробуем ввести новый логин';
-			$this->fillEmailName($newName);
+			echo ' Пробуем ввести новый логин' . PHP_EOL;
+			$this->fillEmailName($name);
 
 		} catch (Exception $exception) {
-			echo __FUNCTION__ . 'Ввели логин' . PHP_EOL;
+			echo __FUNCTION__ . ' Ввели логин' . PHP_EOL;
 			// echo $exception->getMessage() . PHP_EOL;
 		}
 
