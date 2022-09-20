@@ -21,7 +21,7 @@ class RegisterPage extends Page
 	public function fillUsername(string $text)
 	{
 
-		$this->waitAfterLoad(5);
+		$this->waitAfterLoad(2);
 
 		echo __FUNCTION__ . ' Вводим имя' . PHP_EOL;
 		$element = $this->waitForVisible(
@@ -171,7 +171,7 @@ class RegisterPage extends Page
 
 		$this->humanInputText($element, $name);
 
-		sleep(5);
+		sleep(rand(0, 2));
 		try {
 			$element = $this->waitForVisible(
 				$this->driver,
@@ -181,11 +181,10 @@ class RegisterPage extends Page
 			echo __FUNCTION__ . ' Аккаунт уже существует' . PHP_EOL;
 			echo __FUNCTION__ . ' Пробуем ввести новый логин' . PHP_EOL;
 
-			$this->fillEmailName(rand(12, 199));
+			$this->fillEmailName(rand(1, 199));
 
 		} catch (Exception $exception) {
 			echo __FUNCTION__ . ' Ввели логин' . PHP_EOL;
-			// echo $exception->getMessage() . PHP_EOL;
 		}
 
 		return $this;
@@ -233,7 +232,7 @@ class RegisterPage extends Page
 
 		$this->driver->action()->moveToElement($switchToEmail, rand(1, 15), rand(1, 15));
 
-		sleep(rand(0, 3));
+		sleep(rand(0, 2));
 		$switchToEmail->click();
 
 		$extraEmail = $this->waitForVisible(
@@ -241,10 +240,10 @@ class RegisterPage extends Page
 			WebDriverBy::xpath("//input[@data-test-id='extra-email']")
 		);
 
-		sleep(rand(0, 3));
+		sleep(rand(0, 2));
 		$extraEmail->click();
 
-		sleep(rand(0, 3));
+		sleep(rand(0, 2));
 		$this->humanInputText($extraEmail, $recoveryEmail);
 
 		return $this;
@@ -294,7 +293,6 @@ class RegisterPage extends Page
 		global $telephone;
 		$telephone = $numberResponse['number'];
 
-		//$element->sendKeys();
 		$this->driver->getKeyboard()
 					 ->sendKeys([WebDriverKeys::BACKSPACE]);
 
@@ -314,7 +312,7 @@ class RegisterPage extends Page
 		$this->driver->action()->moveToElement($element, rand(1, 15), rand(1, 15));
 		$element->click();
 
-		sleep(5);
+		sleep(rand(0, 3));
 		$this->solvingCaptcha();
 
 		return $this;
@@ -322,6 +320,8 @@ class RegisterPage extends Page
 
 	private function solvingCaptcha()
 	{
+		$this->sendCallUiRateLimit();
+
 		if ($currentUrl = strtok($this->driver->getCurrentURL(), '?') == 'https://e.mail.ru/inbox') {
 			$this->setMinimumConfig();
 		}
@@ -387,7 +387,7 @@ class RegisterPage extends Page
 
 			echo __FUNCTION__ . ' Ищем callback' . PHP_EOL;
 
-			sleep(5);
+			sleep(rand(0, 3));
 			echo __FUNCTION__ . ' Возвращаем последний callback' . PHP_EOL;
 			$callback = $this->driver->executeScript('return findRecaptchaClients()');
 
@@ -413,7 +413,7 @@ class RegisterPage extends Page
 			while ($responseCaptcha->getBody()->__toString() === 'CAPCHA_NOT_READY') {
 				var_dump($responseCaptcha->getBody()->__toString()) . PHP_EOL;
 				$responseCaptcha = $client->request('GET', "https://rucaptcha.com/res.php?key=$captcha_api_key&action=get&id=$responseKey[1]");
-				sleep(10);
+				sleep(rand(1, 5));
 			}
 
 			$responseCaptchaKey = explode('|', $responseCaptcha->getBody()->__toString());
@@ -427,7 +427,7 @@ class RegisterPage extends Page
 				$this->driver->executeScript("document.querySelector('#g-recaptcha-response-$callbackId').value = '$responseCaptchaKey[1]'");
 			}
 
-			sleep(3);
+			sleep(rand(0, 3));
 			$this->driver->executeScript($callbackName);
 			$this->clickResume();
 
@@ -440,10 +440,12 @@ class RegisterPage extends Page
 
 	private function fillReceivedSms()
 	{
+		$this->sendCallUiRateLimit();
+
 		$this->checkIfNeedCallBypass();
 
 		try {
-			sleep(rand(3, 5));
+			sleep(rand(1, 5));
 
 			$smsCodeForm = $this->driver->wait(5, 1000)->until(
 				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//input[@data-test-id='code']"))
@@ -465,11 +467,11 @@ class RegisterPage extends Page
 				$getStatus = $smsAktiwator->getStatus($this->numberResponseId);
 
 				echo __FUNCTION__ . ' Текущий статус смс: ' . $getStatus . PHP_EOL;
-				sleep(30);
 
-				$timer += 30;
+				sleep(10);
+				$timer += 10;
 
-				if ($timer > 90) {
+				if ($timer > 70) {
 					try {
 						echo __FUNCTION__ . ' Пытаемся получить смс код повторно' . PHP_EOL;
 
@@ -481,8 +483,6 @@ class RegisterPage extends Page
 
 						sleep(rand(0, 3));
 						$resendLink->click();
-
-						$this->sendCallUiRateLimit();
 
 					} catch (Exception $exception) {
 						echo __FUNCTION__ . ' ' . $exception->getMessage() . PHP_EOL;
@@ -519,10 +519,12 @@ class RegisterPage extends Page
 
 	private function clickResume()
 	{
+		$this->sendCallUiRateLimit();
+
 		try {
-			sleep(rand(1, 3));
+			sleep(rand(0, 3));
 			/** @var RemoteWebElement $codeField */
-			$codeField = $this->driver->wait(5, 1000)->until(
+			$codeField = $this->driver->wait(3, 300)->until(
 				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//input[@data-test-id='code']"))
 			);
 
@@ -531,14 +533,12 @@ class RegisterPage extends Page
 			}
 
 		} catch (Exception $exception) {
-			echo __FUNCTION__ . ' ' . $exception->getMessage() . PHP_EOL;
 			echo __FUNCTION__ . ' Форма ввода для смс не найдена' . PHP_EOL;
-			$this->sendCallUiRateLimit();
 		}
 
 		try {
 			echo __FUNCTION__ . ' Ищем кнопку продолжить' . PHP_EOL;
-			$nextButton = $this->driver->wait(5, 1000)->until(
+			$nextButton = $this->driver->wait(3, 300)->until(
 				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//button[@data-test-id='verification-next-button']"))
 			);
 
@@ -552,6 +552,8 @@ class RegisterPage extends Page
 
 	public function setMinimumConfig()
 	{
+		$this->sendCallUiRateLimit();
+
 		$currentUrl = strtok($this->driver->getCurrentURL(), '?');
 		echo __FUNCTION__ . ' Текущая страница: ' . $currentUrl . PHP_EOL;
 
@@ -576,7 +578,7 @@ class RegisterPage extends Page
 			sleep(rand(2, 3));
 			$buttonStart->click();
 
-			$buttonEmailBoxType = $this->driver->wait(5, 1000)->until(
+			$buttonEmailBoxType = $this->driver->wait(10, 1000)->until(
 				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//button[@data-test-id='onboarding-button-step']"))
 			);
 			$this->driver->action()->moveToElement($buttonEmailBoxType, rand(1, 15), rand(1, 15));
@@ -584,7 +586,7 @@ class RegisterPage extends Page
 			sleep(rand(1, 3));
 			$buttonEmailBoxType->click();
 
-			$buttonComplete = $this->driver->wait(5, 1000)->until(
+			$buttonComplete = $this->driver->wait(10, 1000)->until(
 				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//button[@data-test-id='onboarding-button-complete']"))
 			);
 
@@ -602,6 +604,7 @@ class RegisterPage extends Page
 			$buttonCancelReserveEmail->click();
 
 			echo 'Аккаунт успешно создан!' . PHP_EOL;
+
 			return;
 
 		} catch (Exception $exception) {
@@ -616,19 +619,19 @@ class RegisterPage extends Page
 		try {
 			echo __FUNCTION__ . ' Ищем форму "Мы Вам звоним"' . PHP_EOL;
 
-			$this->driver->wait(10, 3000)->until(
+			$this->driver->wait(3, 300)->until(
 				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//h3[@data-test-id='verification-step-header-callui']"))
 			);
 			echo __FUNCTION__ . ' Нашли форму "Мы Вам звоним" ждем 60 секунд' . PHP_EOL;
 
 			try {
-				$elementGoNext = $this->driver->wait(100, 300)->until(
+				$elementGoNext = $this->driver->wait(100, 3000)->until(
 					WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//a[@data-test-id='resend-callui-link']"))
 				);
 
 				$this->driver->action()->moveToElement($elementGoNext);
 
-				sleep(rand(1, 5));
+				sleep(rand(1, 3));
 				$elementGoNext->click();
 
 			} catch (Exception $exception) {
@@ -645,26 +648,28 @@ class RegisterPage extends Page
 	private function sendCallUiRateLimit()
 	{
 		try {
-			$this->driver->wait(5, 300)->until(
+			$formError = $this->driver->wait(3, 300)->until(
 				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//div[@data-test-id='form-error-sendCallUiRateLimit']"))
 			);
-			echo __FUNCTION__ . ' Лимит на обратный звонок сообщений' . PHP_EOL;
 
-		} catch (Throwable $exception) {
-			echo __FUNCTION__ . ' ' . $exception->getMessage() . PHP_EOL;
+		} catch (Exception $exception) {
+		} finally {
+			if (isset($formError)) {
+				throw new Exception('Лимит на отправку обратных звонков');
+			}
 		}
 
 		try {
-			$this->driver->wait(5, 300)->until(
+			$formError = $this->driver->wait(3, 300)->until(
 				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//div[@data-test-id='form-error-sendCodeRateLimit']"))
 			);
-			echo __FUNCTION__ . ' Лимит на отправку сообщений' . PHP_EOL;
-			return;
 
-		} catch (Throwable $exception) {
-			echo __FUNCTION__ . ' ' . $exception->getMessage() . PHP_EOL;
+		} catch (Exception $exception) {
+		} finally {
+			if (isset($formError)) {
+				throw new Exception('Лимит на отправку сообщений');
+			}
 		}
-
 	}
 
 	private function acceptCookies()
@@ -679,8 +684,6 @@ class RegisterPage extends Page
 			$acceptButton->click();
 
 		} catch (Exception $exception) {
-			echo __FUNCTION__ . ' ' . $exception->getMessage() . PHP_EOL;
-			echo 'Окно о принятии cookies не найдено' . PHP_EOL;
 		}
 	}
 }
