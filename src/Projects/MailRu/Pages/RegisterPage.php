@@ -177,7 +177,7 @@ class RegisterPage extends Page
 			);
 
 			echo __FUNCTION__ . ' Аккаунт уже существует' . PHP_EOL;
-			echo ' Пробуем ввести новый логин' . PHP_EOL;
+			echo __FUNCTION__ . ' Пробуем ввести новый логин' . PHP_EOL;
 
 			$this->fillEmailName(rand(12, 199));
 
@@ -520,15 +520,15 @@ class RegisterPage extends Page
 				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//input[@data-test-id='code']"))
 			);
 
-			var_dump($codeField) . PHP_EOL;
-			
+			var_dump($codeField->getValue()) . PHP_EOL;
+
 			if (!$codeField->getValue()) {
 				$this->fillReceivedSms();
 			}
 
 		} catch (Exception $exception) {
 			echo __FUNCTION__ . ' ' . $exception->getMessage() . PHP_EOL;
-			echo __FUNCTION__ . 'Форма ввода для смс не найдена' . PHP_EOL;
+			echo __FUNCTION__ . ' Форма ввода для смс не найдена' . PHP_EOL;
 			$this->sendCallUiRateLimit();
 		}
 
@@ -562,19 +562,16 @@ class RegisterPage extends Page
 			sleep(rand(2, 3));
 			$buttonStart->click();
 
-			$buttonEmailBoxType = $this->waitForVisible(
-				$this->driver,
-				WebDriverBy::xpath("//button[@data-test-id='onboarding-button-step']")
+			$buttonEmailBoxType = $this->driver->wait(5, 1000)->until(
+				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//button[@data-test-id='onboarding-button-step']"))
 			);
-
 			$this->driver->action()->moveToElement($buttonEmailBoxType, rand(1, 15), rand(1, 15));
 
 			sleep(rand(1, 3));
 			$buttonEmailBoxType->click();
 
-			$buttonComplete = $this->waitForVisible(
-				$this->driver,
-				WebDriverBy::xpath("//button[@data-test-id='onboarding-button-complete']")
+			$buttonComplete = $this->driver->wait(5, 1000)->until(
+				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//button[@data-test-id='onboarding-button-complete']"))
 			);
 
 			$this->driver->action()->moveToElement($buttonComplete, rand(1, 15), rand(1, 15));
@@ -582,11 +579,9 @@ class RegisterPage extends Page
 			sleep(rand(1, 3));
 			$buttonComplete->click();
 
-			$buttonCancelReserveEmail = $this->waitForVisible(
-				$this->driver,
-				WebDriverBy::xpath("//button[@data-test-id='recovery-addEmail-cancel']")
+			$buttonCancelReserveEmail = $this->driver->wait(5, 1000)->until(
+				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//button[@data-test-id='recovery-addEmail-cancel']"))
 			);
-
 			$this->driver->action()->moveToElement($buttonCancelReserveEmail, rand(1, 15), rand(1, 15));
 
 			sleep(rand(1, 3));
