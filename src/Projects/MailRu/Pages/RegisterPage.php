@@ -648,7 +648,7 @@ class RegisterPage extends Page
 			$this->driver->wait(5, 300)->until(
 				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//div[@data-test-id='form-error-sendCallUiRateLimit']"))
 			);
-			throw new Exception('Лимит на обратный звонок');
+			echo __FUNCTION__ . ' Лимит на обратный звонок сообщений' . PHP_EOL;
 
 		} catch (Throwable $exception) {
 			echo __FUNCTION__ . ' ' . $exception->getMessage() . PHP_EOL;
@@ -658,7 +658,8 @@ class RegisterPage extends Page
 			$this->driver->wait(5, 300)->until(
 				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//div[@data-test-id='form-error-sendCodeRateLimit']"))
 			);
-			throw new Exception('Лимит на отправку сообщений');
+			echo __FUNCTION__ . ' Лимит на отправку сообщений' . PHP_EOL;
+			return;
 
 		} catch (Throwable $exception) {
 			echo __FUNCTION__ . ' ' . $exception->getMessage() . PHP_EOL;
