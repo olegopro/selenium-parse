@@ -565,7 +565,7 @@ class RegisterPage extends Page
 			);
 
 			global $mailLogin;
-			$mailLogin = $getMailLogin->getAttribute('value');
+			$mailLogin = $getMailLogin->getText();
 
 			$buttonStart = $this->driver->wait(10, 1000)->until(
 				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//button[@data-test-id='onboarding-button-start']"))
