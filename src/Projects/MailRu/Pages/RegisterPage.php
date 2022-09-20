@@ -324,6 +324,7 @@ class RegisterPage extends Page
 	{
 		if ($currentUrl = strtok($this->driver->getCurrentURL(), '?') == 'https://e.mail.ru/inbox') {
 			$this->setMinimumConfig();
+			return;
 		}
 
 		$captcha_api_key = $_ENV['CAPTCHA_KEY'];
