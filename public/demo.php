@@ -19,16 +19,15 @@ use Facebook\WebDriver\WebDriverPoint;
 
 require '../vendor/autoload.php';
 
-$serverUrl = 'http://10.37.129.2:4444';
-
 $chromeOptions = new ChromeOptions();
-// $chromeOptions->addArguments(['start-maximized']);
 $chromeOptions->addArguments(['window-size=800,600']);
 
 $capabilities = DesiredCapabilities::chrome();
 $capabilities->setCapability(ChromeOptions::CAPABILITY_W3C, $chromeOptions);
 
-$driver = RemoteWebDriver::create($serverUrl, $capabilities);
+putenv('WEBDRIVER_CHROME_DRIVER=/Users/evilgazz/Downloads/chromedriver105');
+$driver = ChromeDriver::start();
+
 $devTools = new ChromeDevToolsDriver($driver);
 
 $devTools->execute(
@@ -36,15 +35,21 @@ $devTools->execute(
 	['userAgent' => 'Mozilla/5.0 (X11; Linux x86_64; rv:83.0) Gecko/20100101 Firefox/83.0']
 );
 
-$driver->get("https://bot.sannysoft.com/");
+// $driver->get("https://bot.sannysoft.com/");
 // $driver->get("https://browserleaks.com/webgl");
 // $driver->get("https://browserleaks.com/javascript");
 // $driver->get("https://pixelscan.net/");
 
-var_dump($driver->getCurrentURL()) . PHP_EOL;
+$driver->get("http://192.168.100.25/");
+
+sleep(3);
+$element = $driver->findElement(WebDriverBy::xpath("//*[@id='myform']"));
+$input = $element->getAttribute('value');
+
+if (!$input) {
+	echo 'нету текста';
+}
+var_dump($input);
 
 sleep(30);
 
-$currentUrl = strtok($driver->getCurrentURL(), '?');
-
-var_dump($currentUrl);

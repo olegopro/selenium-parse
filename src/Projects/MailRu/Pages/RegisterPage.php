@@ -12,6 +12,7 @@ use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\WebDriverKeys;
 use Facebook\WebDriver\WebDriverWait;
 use GuzzleHttp\Client;
+use Throwable;
 
 class RegisterPage extends Page
 {
@@ -521,9 +522,7 @@ class RegisterPage extends Page
 				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//input[@data-test-id='code']"))
 			);
 
-			var_dump($codeField->getText()) . PHP_EOL;
-
-			if (!$codeField->getText()) {
+			if (!$codeField->getAttribute('value')) {
 				$this->fillReceivedSms();
 			}
 
