@@ -6,6 +6,7 @@ use App\SmsAPI\MainActivator;
 use App\SmsAPI\Services\smsAcktiwator;
 use Exception;
 use Facebook\WebDriver\Exception\NoSuchElementException;
+use Facebook\WebDriver\Remote\RemoteWebElement;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\WebDriverKeys;
@@ -515,14 +516,14 @@ class RegisterPage extends Page
 	{
 		try {
 			sleep(rand(1, 3));
-			/** @var WebDriverBy $codeField */
+			/** @var RemoteWebElement $codeField */
 			$codeField = $this->driver->wait(5, 1000)->until(
 				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//input[@data-test-id='code']"))
 			);
 
-			var_dump($codeField->getValue()) . PHP_EOL;
+			var_dump($codeField->getText()) . PHP_EOL;
 
-			if (!$codeField->getValue()) {
+			if (!$codeField->getText()) {
 				$this->fillReceivedSms();
 			}
 
