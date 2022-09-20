@@ -18,4 +18,12 @@ trait humanSimulations
 			sleep(rand(0, 1));
 		}
 	}
+
+	protected function humanInputTextNumber($element, $text)
+	{
+		foreach (str_split($text) as $item) {
+			$element->sendKeys($item);
+			sleep(rand(0, 1));
+		}
+	}
 }

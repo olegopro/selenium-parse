@@ -6,7 +6,6 @@ use App\SmsAPI\MainActivator;
 use App\SmsAPI\Services\smsAcktiwator;
 use Exception;
 use Facebook\WebDriver\Exception\NoSuchElementException;
-use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\WebDriverKeys;
@@ -19,6 +18,9 @@ class RegisterPage extends Page
 
 	public function fillUsername(string $text)
 	{
+
+		$this->waitAfterLoad(5);
+
 		echo __FUNCTION__ . ' Вводим имя' . PHP_EOL;
 		$element = $this->waitForVisible(
 			$this->driver,
@@ -167,6 +169,7 @@ class RegisterPage extends Page
 
 		$this->humanInputText($element, $name);
 
+		sleep(5);
 		try {
 			$element = $this->waitForVisible(
 				$this->driver,
@@ -174,10 +177,9 @@ class RegisterPage extends Page
 			);
 
 			echo __FUNCTION__ . ' Аккаунт уже существует' . PHP_EOL;
-			$name . rand(10, 99);
-
 			echo ' Пробуем ввести новый логин' . PHP_EOL;
-			$this->fillEmailName($name);
+
+			$this->fillEmailName(rand(12, 199));
 
 		} catch (Exception $exception) {
 			echo __FUNCTION__ . ' Ввели логин' . PHP_EOL;
@@ -310,6 +312,7 @@ class RegisterPage extends Page
 		$this->driver->action()->moveToElement($element, rand(1, 15), rand(1, 15));
 		$element->click();
 
+		sleep(5);
 		$this->solvingCaptcha();
 
 		return $this;
@@ -320,11 +323,11 @@ class RegisterPage extends Page
 		$captcha_api_key = $_ENV['CAPTCHA_KEY'];
 
 		try {
-			$element = $this->waitForVisible(
-				$this->driver,
-				WebDriverBy::xpath("//h3[@data-test-id='verification-step-header-recaptcha']"),
-				3
+
+			$this->driver->wait(5, 1000)->until(
+				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//*[@data-test-id='verification-step-header-recaptcha']"))
 			);
+
 			echo __FUNCTION__ . ' Нашли капчу' . PHP_EOL;
 
 			sleep(1);
@@ -422,7 +425,8 @@ class RegisterPage extends Page
 			$this->driver->executeScript($callbackName);
 			$this->clickResume();
 
-		} catch (NoSuchElementException $e) {
+		} catch (Exception $e) {
+			echo __FUNCTION__ . ' ' . $e->getMessage() . PHP_EOL;
 			echo __FUNCTION__ . ' Captcha не обнаружена идем дальше' . PHP_EOL;
 			$this->fillReceivedSms();
 		}
@@ -433,17 +437,16 @@ class RegisterPage extends Page
 		$this->checkIfNeedCallBypass();
 
 		try {
-			sleep(rand(5, 15));
-			$element = $this->waitForVisible(
-				$this->driver,
-				WebDriverBy::xpath("//input[@data-test-id='code']"),
-				2
+			sleep(rand(3, 5));
+
+			$smsCodeForm = $this->driver->wait(5, 1000)->until(
+				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//input[@data-test-id='code']"))
 			);
 
-			$this->driver->action()->moveToElement($element, rand(1, 15), rand(1, 15));
+			$this->driver->action()->moveToElement($smsCodeForm, rand(1, 15), rand(1, 15));
 
 			sleep(rand(0, 1));
-			$element->click();
+			$smsCodeForm->click();
 
 			sleep(rand(0, 1));
 			$client = new Client();
@@ -460,21 +463,23 @@ class RegisterPage extends Page
 
 				$timer += 30;
 
-				if ($timer === 90) {
+				if ($timer > 90) {
 					try {
 						echo __FUNCTION__ . ' Пытаемся получить смс код повторно' . PHP_EOL;
-						$element = $this->waitForVisible(
-							$this->driver,
-							WebDriverBy::xpath("//a[@data-test-id='resend-code-link']"),
-							5
+
+						$resendLink = $this->driver->wait(5, 1000)->until(
+							WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//a[@data-test-id='resend-code-link']"))
 						);
 
-						$this->driver->action()->moveToElement($element, rand(1, 15), rand(1, 15));
+						$this->driver->action()->moveToElement($resendLink, rand(1, 15), rand(1, 15));
 
 						sleep(rand(0, 3));
-						$element->click();
+						$resendLink->click();
+
+						$this->sendCallUiRateLimit();
+
 					} catch (Exception $exception) {
-						echo $exception->getMessage() . PHP_EOL;
+						echo __FUNCTION__ . ' ' . $exception->getMessage() . PHP_EOL;
 
 						echo __FUNCTION__ . ' Проверяем наличие капчи' . PHP_EOL;
 						$this->solvingCaptcha();
@@ -489,18 +494,18 @@ class RegisterPage extends Page
 			}
 
 			echo __FUNCTION__ . ' Вводим СМС' . PHP_EOL;
-			$this->humanInputText($element, $getStatusResponse[1]);
+			$this->humanInputTextNumber($smsCodeForm, $getStatusResponse[1]);
 			$this->clickResume();
 
 		} catch (NoSuchElementException $exception) {
 			echo __FUNCTION__ . ' Форма для получения смс кода не найдена. Идем дальше' . PHP_EOL;
 			try {
-				echo __FUNCTION__ . 'Ищем кнопку "Продолжить"' . PHP_EOL;
-				$this->clickResume();
+				echo __FUNCTION__ . ' Проверяем существование капчи"' . PHP_EOL;
+				$this->solvingCaptcha();
 			} catch (Exception $exception) {
-				echo $exception->getMessage();
-				echo __FUNCTION__ . 'Кнопка "Продолжить" не найдена' . PHP_EOL;
-				$this->setMinimumConfig();
+				echo __FUNCTION__ . ' ' . $exception->getMessage();
+				echo __FUNCTION__ . ' Кнопка "Продолжить" не найдена, проверяем ' . PHP_EOL;
+				$this->solvingCaptcha();
 			}
 		}
 
@@ -509,16 +514,34 @@ class RegisterPage extends Page
 	private function clickResume()
 	{
 		try {
-			echo __FUNCTION__ . ' Ищем кнопку продолжить' . PHP_EOL;
-			$element = $this->waitForVisible(
-				$this->driver,
-				WebDriverBy::xpath("//button[@data-test-id='verification-next-button']"),
-				3
+			sleep(rand(1, 3));
+			/** @var WebDriverBy $codeField */
+			$codeField = $this->driver->wait(5, 1000)->until(
+				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//input[@data-test-id='code']"))
 			);
 
-			$this->driver->action()->moveToElement($element, rand(1, 15), rand(1, 15));
-			$element->click();
-		} catch (NoSuchElementException $exception) {
+			var_dump($codeField) . PHP_EOL;
+			
+			if (!$codeField->getValue()) {
+				$this->fillReceivedSms();
+			}
+
+		} catch (Exception $exception) {
+			echo __FUNCTION__ . ' ' . $exception->getMessage() . PHP_EOL;
+			echo __FUNCTION__ . 'Форма ввода для смс не найдена' . PHP_EOL;
+			$this->sendCallUiRateLimit();
+		}
+
+		try {
+			echo __FUNCTION__ . ' Ищем кнопку продолжить' . PHP_EOL;
+			$nextButton = $this->driver->wait(5, 1000)->until(
+				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//button[@data-test-id='verification-next-button']"))
+			);
+
+			$this->driver->action()->moveToElement($nextButton, rand(1, 15), rand(1, 15));
+			$nextButton->click();
+
+		} catch (Exception $exception) {
 			echo __FUNCTION__ . ' Не нашли кнопку продолжить' . PHP_EOL;
 		}
 	}
@@ -529,49 +552,47 @@ class RegisterPage extends Page
 		echo __FUNCTION__ . ' Текущая страница: ' . $currentUrl . PHP_EOL;
 
 		try {
-			if ($currentUrl === 'https://e.mail.ru/inbox') {
-				$buttonStart = $this->waitForVisible(
-					$this->driver,
-					WebDriverBy::xpath("//button[@data-test-id='onboarding-button-start']")
-				);
 
-				$this->driver->action()->moveToElement($buttonStart, rand(1, 15), rand(1, 15));
+			$buttonStart = $this->driver->wait(10, 1000)->until(
+				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//button[@data-test-id='onboarding-button-start']"))
+			);
 
-				sleep(rand(2, 3));
-				$buttonStart->click();
+			$this->driver->action()->moveToElement($buttonStart, rand(1, 15), rand(1, 15));
 
-				$buttonEmailBoxType = $this->waitForVisible(
-					$this->driver,
-					WebDriverBy::xpath("//button[@data-test-id='onboarding-button-step']")
-				);
+			sleep(rand(2, 3));
+			$buttonStart->click();
 
-				$this->driver->action()->moveToElement($buttonEmailBoxType, rand(1, 15), rand(1, 15));
+			$buttonEmailBoxType = $this->waitForVisible(
+				$this->driver,
+				WebDriverBy::xpath("//button[@data-test-id='onboarding-button-step']")
+			);
 
-				sleep(rand(1, 3));
-				$buttonEmailBoxType->click();
+			$this->driver->action()->moveToElement($buttonEmailBoxType, rand(1, 15), rand(1, 15));
 
-				$buttonComplete = $this->waitForVisible(
-					$this->driver,
-					WebDriverBy::xpath("//button[@data-test-id='onboarding-button-complete']")
-				);
+			sleep(rand(1, 3));
+			$buttonEmailBoxType->click();
 
-				$this->driver->action()->moveToElement($buttonComplete, rand(1, 15), rand(1, 15));
+			$buttonComplete = $this->waitForVisible(
+				$this->driver,
+				WebDriverBy::xpath("//button[@data-test-id='onboarding-button-complete']")
+			);
 
-				sleep(rand(1, 3));
-				$buttonComplete->click();
+			$this->driver->action()->moveToElement($buttonComplete, rand(1, 15), rand(1, 15));
 
-				$buttonCancelReserveEmail = $this->waitForVisible(
-					$this->driver,
-					WebDriverBy::xpath("//button[@data-test-id='recovery-addEmail-cancel']")
-				);
+			sleep(rand(1, 3));
+			$buttonComplete->click();
 
-				$this->driver->action()->moveToElement($buttonCancelReserveEmail, rand(1, 15), rand(1, 15));
+			$buttonCancelReserveEmail = $this->waitForVisible(
+				$this->driver,
+				WebDriverBy::xpath("//button[@data-test-id='recovery-addEmail-cancel']")
+			);
 
-				sleep(rand(1, 3));
-				$buttonCancelReserveEmail->click();
+			$this->driver->action()->moveToElement($buttonCancelReserveEmail, rand(1, 15), rand(1, 15));
 
-				echo 'Аккаунт успешно создан!' . PHP_EOL;
-			}
+			sleep(rand(1, 3));
+			$buttonCancelReserveEmail->click();
+
+			echo 'Аккаунт успешно создан!' . PHP_EOL;
 
 		} catch (Exception $exception) {
 			echo $exception->getMessage() . PHP_EOL;
@@ -584,25 +605,53 @@ class RegisterPage extends Page
 	{
 		try {
 			echo __FUNCTION__ . ' Ищем форму "Мы Вам звоним"' . PHP_EOL;
-			$element = $this->waitForVisible(
-				$this->driver,
-				WebDriverBy::xpath("//h3[@data-test-id='verification-step-header-callui']"),
-				2
-			);
 
+			$this->driver->wait(10, 3000)->until(
+				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//h3[@data-test-id='verification-step-header-callui']"))
+			);
 			echo __FUNCTION__ . ' Нашли форму "Мы Вам звоним" ждем 60 секунд';
-			sleep(rand(60, 70));
-			$elementGoNext = $this->waitForVisible(
-				$this->driver,
-				WebDriverBy::xpath("//a[@data-test-id='resend-callui-link']")
-			);
 
-			$this->driver->action()->moveToElement($elementGoNext, rand(1, 15), rand(1, 15));
+			try {
+				$elementGoNext = $this->driver->wait(100, 300)->until(
+					WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//a[@data-test-id='resend-callui-link']"))
+				);
+			} catch (Exception $exception) {
+				echo __FUNCTION__ . ' ' . $exception->getMessage();
+			}
 
-			sleep(rand(0, 1));
+			$this->driver->action()->moveToElement($elementGoNext);
+
+			sleep(rand(1, 5));
 			$elementGoNext->click();
+
+			$this->solvingCaptcha();
+
 		} catch (NoSuchElementException $e) {
 			echo __FUNCTION__ . ' Форма "Мы Вам звоним не найдена" идём дальше' . PHP_EOL;
 		}
+	}
+
+	private function sendCallUiRateLimit()
+	{
+		try {
+			$this->driver->wait(5, 300)->until(
+				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//div[@data-test-id='form-error-sendCallUiRateLimit']"))
+			);
+			throw new Exception('Лимит на обратный звонок');
+
+		} catch (Throwable $exception) {
+			echo __FUNCTION__ . ' ' . $exception->getMessage() . PHP_EOL;
+		}
+
+		try {
+			$this->driver->wait(5, 300)->until(
+				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//div[@data-test-id='form-error-sendCodeRateLimit']"))
+			);
+			throw new Exception('Лимит на отправку сообщений');
+
+		} catch (Throwable $exception) {
+			echo __FUNCTION__ . ' ' . $exception->getMessage() . PHP_EOL;
+		}
+
 	}
 }
