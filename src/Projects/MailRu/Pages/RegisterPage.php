@@ -324,7 +324,6 @@ class RegisterPage extends Page
 	{
 		if ($currentUrl = strtok($this->driver->getCurrentURL(), '?') == 'https://e.mail.ru/inbox') {
 			$this->setMinimumConfig();
-			return;
 		}
 
 		$captcha_api_key = $_ENV['CAPTCHA_KEY'];
@@ -510,7 +509,7 @@ class RegisterPage extends Page
 				echo __FUNCTION__ . ' Проверяем существование капчи' . PHP_EOL;
 				$this->solvingCaptcha();
 			} catch (Exception $exception) {
-				echo __FUNCTION__ . ' ' . $exception->getMessage();
+				echo __FUNCTION__ . ' ' . $exception->getMessage() . PHP_EOL;
 				echo __FUNCTION__ . ' Кнопка "Продолжить" не найдена, проверяем ' . PHP_EOL;
 				$this->solvingCaptcha();
 			}
@@ -603,10 +602,11 @@ class RegisterPage extends Page
 			$buttonCancelReserveEmail->click();
 
 			echo 'Аккаунт успешно создан!' . PHP_EOL;
+			return;
 
 		} catch (Exception $exception) {
 			echo $exception->getMessage() . PHP_EOL;
-			echo 'Пробуем найти капчу' . PHP_EOL;
+			echo __FUNCTION__ . ' Пробуем найти капчу' . PHP_EOL;
 			$this->solvingCaptcha();
 		}
 	}
@@ -632,7 +632,7 @@ class RegisterPage extends Page
 				$elementGoNext->click();
 
 			} catch (Exception $exception) {
-				echo __FUNCTION__ . ' ' . $exception->getMessage();
+				echo __FUNCTION__ . ' ' . $exception->getMessage() . PHP_EOL;
 			}
 
 			$this->solvingCaptcha();
