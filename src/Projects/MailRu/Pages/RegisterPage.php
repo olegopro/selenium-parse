@@ -322,6 +322,10 @@ class RegisterPage extends Page
 
 	private function solvingCaptcha()
 	{
+		if ($currentUrl = strtok($this->driver->getCurrentURL(), '?') == 'https://e.mail.ru/inbox') {
+			$this->setMinimumConfig();
+		}
+
 		$captcha_api_key = $_ENV['CAPTCHA_KEY'];
 
 		try {
@@ -502,7 +506,7 @@ class RegisterPage extends Page
 		} catch (NoSuchElementException $exception) {
 			echo __FUNCTION__ . ' Форма для получения смс кода не найдена. Идем дальше' . PHP_EOL;
 			try {
-				echo __FUNCTION__ . ' Проверяем существование капчи"' . PHP_EOL;
+				echo __FUNCTION__ . ' Проверяем существование капчи' . PHP_EOL;
 				$this->solvingCaptcha();
 			} catch (Exception $exception) {
 				echo __FUNCTION__ . ' ' . $exception->getMessage();
@@ -552,6 +556,16 @@ class RegisterPage extends Page
 		echo __FUNCTION__ . ' Текущая страница: ' . $currentUrl . PHP_EOL;
 
 		try {
+
+			$this->acceptCookies();
+
+			/** @var RemoteWebElement $getMailLogin */
+			$getMailLogin = $this->driver->wait(10, 1000)->until(
+				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//span[contains(@class, 'ph-project__user-name')]"))
+			);
+
+			global $mailLogin;
+			$mailLogin = $getMailLogin->getAttribute('value');
 
 			$buttonStart = $this->driver->wait(10, 1000)->until(
 				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//button[@data-test-id='onboarding-button-start']"))
@@ -648,5 +662,22 @@ class RegisterPage extends Page
 			echo __FUNCTION__ . ' ' . $exception->getMessage() . PHP_EOL;
 		}
 
+	}
+
+	private function acceptCookies()
+	{
+		try {
+			/** @var RemoteWebElement $acceptButton */
+			$acceptButton = $this->driver->wait(5, 300)->until(
+				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//a[contains(@class, 'cmptxt_btn_yes')]"))
+			);
+
+			$this->driver->action()->moveToElement($acceptButton, rand(1, 15), rand(1, 15));
+			$acceptButton->click();
+
+		} catch (Exception $exception) {
+			echo __FUNCTION__ . ' ' . $exception->getMessage() . PHP_EOL;
+			echo 'Окно о принятии cookies не найдено' . PHP_EOL;
+		}
 	}
 }
