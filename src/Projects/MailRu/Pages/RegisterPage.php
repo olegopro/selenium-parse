@@ -618,20 +618,21 @@ class RegisterPage extends Page
 			$this->driver->wait(10, 3000)->until(
 				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//h3[@data-test-id='verification-step-header-callui']"))
 			);
-			echo __FUNCTION__ . ' Нашли форму "Мы Вам звоним" ждем 60 секунд';
+			echo __FUNCTION__ . ' Нашли форму "Мы Вам звоним" ждем 60 секунд' . PHP_EOL;
 
 			try {
 				$elementGoNext = $this->driver->wait(100, 300)->until(
 					WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//a[@data-test-id='resend-callui-link']"))
 				);
+
+				$this->driver->action()->moveToElement($elementGoNext);
+
+				sleep(rand(1, 5));
+				$elementGoNext->click();
+
 			} catch (Exception $exception) {
 				echo __FUNCTION__ . ' ' . $exception->getMessage();
 			}
-
-			$this->driver->action()->moveToElement($elementGoNext);
-
-			sleep(rand(1, 5));
-			$elementGoNext->click();
 
 			$this->solvingCaptcha();
 
