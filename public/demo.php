@@ -36,6 +36,7 @@ $devTools->execute(
 );
 
 // $driver->get("https://bot.sannysoft.com/");
+// $driver->get("https://webbrowsertools.com/");
 // $driver->get("https://browserleaks.com/webgl");
 // $driver->get("https://browserleaks.com/javascript");
 // $driver->get("https://pixelscan.net/");

@@ -2,7 +2,6 @@
 
 namespace App\Projects\MailRu\Pages;
 
-
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverTargetLocator;
 
@@ -11,7 +10,6 @@ class MainPage extends Page
 	public function openMainPage($url)
 	{
 		$this->driver->get($url);
-
 
 		return $this;
 	}

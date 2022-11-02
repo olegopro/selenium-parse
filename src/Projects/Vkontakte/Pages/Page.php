@@ -1,13 +1,10 @@
 <?php
 
-namespace App\Projects\MailRu\Pages;
+namespace App\Projects\Vkontakte\Pages;
 
 use App\Helpers\humanSimulations;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\WebDriver;
-use Facebook\WebDriver\WebDriverBy;
-use Facebook\WebDriver\WebDriverElement;
-use Facebook\WebDriver\WebDriverExpectedCondition;
 
 abstract class Page
 {
@@ -18,19 +15,6 @@ abstract class Page
 	public function __construct(RemoteWebDriver $driver)
 	{
 		$this->driver = $driver;
-	}
-
-	/**
-	 * @param WebDriver $driver
-	 * @param WebDriverBy $element
-	 *
-	 * @return WebDriverElement
-	 */
-	static function waitForVisible(WebDriver $driver, WebDriverBy $element, $timeOut = 3)
-	{
-		return $driver->wait($timeOut, 500)->until(
-			WebDriverExpectedCondition::visibilityOfElementLocated($element)
-		);
 	}
 
 	private function waitUntilDomReadyState(WebDriver $webDriver, $sleep_time)
@@ -48,4 +32,5 @@ abstract class Page
 
 		return $this;
 	}
+
 }
