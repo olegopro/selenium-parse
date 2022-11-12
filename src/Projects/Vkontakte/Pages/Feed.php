@@ -19,7 +19,7 @@ class Feed extends Page
 		});
 
 		$likeCount = 0;
-		while ($likeCount < 100) {
+		while ($likeCount < 50) {
 
 			try {
 

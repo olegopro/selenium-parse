@@ -1,11 +1,13 @@
 {
   "license": "MIT",
   "name": "olegopro/selenium-parse",
+  "minimum-stability": "dev",
   "require": {
     "php-webdriver/webdriver": "^1.12",
     "guzzlehttp/guzzle": "^7.4",
     "ext-zip": "*",
-    "vlucas/phpdotenv": "^5.4"
+    "vlucas/phpdotenv": "^5.5",
+    "olegopro/phpgologin": "dev-main"
   },
   "autoload": {
     "psr-4": {
