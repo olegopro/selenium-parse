@@ -22,7 +22,8 @@ $GoLogin = new GoLoginProfile;
 // 	'task_proxy_password' => 'password'
 // ]);
 
-$profile_id = $GoLogin->createProfile();
+// $profile_id = $GoLogin->createProfile();
+$profile_id = '63e7166f351ae696260fc2ed';
 
 echo 'profile id = ' . $profile_id . PHP_EOL;
 $profile = $GoLogin->gl->getProfile($profile_id);
@@ -35,9 +36,9 @@ $driver = $GoLogin->runOrbitaBrowser($debugger_address);
 
 $goSerf = new FrontPage($driver);
 
-$goSerf->openPage('https://salamba.ru')
+$goSerf->openPage('file:///Users/evilgazz/Downloads/salamba.html')
 	   ->searchAndClickRandomArticle()
-	   ->scrollDown(0)
+	   ->readArticle(0)
 	   ->findRandomArticlesInFooter();
 
 sleep(rand(5, 15));
@@ -46,4 +47,4 @@ $driver->close();
 $orbita->stop();
 
 sleep(10);
-$GoLogin->gl->delete($profile_id);
+// $GoLogin->gl->delete($profile_id);

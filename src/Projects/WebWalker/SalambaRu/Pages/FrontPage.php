@@ -10,180 +10,152 @@ use Facebook\WebDriver\WebDriverExpectedCondition;
 
 class FrontPage extends Page
 {
+    public function openPage($url)
+    {
+        $this->driver->get($url);
 
-	private $element;
+        return $this;
+    }
 
-	public function openPage($url)
-	{
-		$this->driver->get($url);
+    public function searchAndClickRandomArticle()
+    {
+        $this->driver->wait()->until(function () {
+            return $this->driver->executeScript('return document.readyState') === 'complete';
+        });
 
-		return $this;
-	}
+        echo 'Ищем статьи на главной: ' . __FUNCTION__ . '()' . PHP_EOL;
 
-	public function searchAndClickRandomArticle()
-	{
-		$this->driver->wait()->until(function () {
-			return $this->driver->executeScript('return document.readyState') === 'complete';
-		});
+        try {
 
-		echo __FUNCTION__ . ' Ищем статьи на главной' . PHP_EOL;
+            $elements = $this->driver->findElements(WebDriverBy::xpath(
+                "//section[contains(@class,'category-section')]//div[contains(@class, 'post-entry-1')]"
+            ));
 
-		try {
+            $rand = array_rand($elements);
+            $randomElement = $elements[$rand];
 
-			$elements = $this->driver->findElements(WebDriverBy::xpath("//section[contains(@class,'category-section')]//img"));
+            $randomElementUrlText = $randomElement->findElement(WebDriverBy::xpath("./h3/a"))->getText();
+            echo $randomElementUrlText . PHP_EOL;
 
-			$rand = array_rand($elements);
-			$randomElement = $elements[$rand];
+            $randomElementImage = $randomElement->findElement(WebDriverBy::xpath(".//img"));
 
-			echo $randomElement->getText() . PHP_EOL;
+            $toggle = true;
+            while ($toggle) {
+                try {
 
-			$toggle = 0;
-			while ($toggle < 10) {
+                    sleep(2);
 
-				try {
+                    $this->driver->action()->moveToElement($randomElementImage)->perform();
+                    $randomElementImage->click();
 
-					sleep(2);
+                    $toggle = false;
 
-					$this->driver->action()->moveToElement($randomElement)->perform();
-					$randomElement->click();
+                } catch (Exception $exception) {
 
-					$toggle = 10;
+                    //Удаляю версию chrome из сообщения
+                    $message = preg_replace('/(\s*)(\(.*\))(\s*)/', '', $exception->getMessage());
+                    echo __FUNCTION__ . '() - ' . $message . PHP_EOL;
 
-				} catch (Exception $exception) {
-					echo $exception->getMessage() . PHP_EOL;
-					$this->oneScrollDown();
-					$toggle++;
-				}
-			}
+                    $this->oneScrollDown();
 
-		} catch (Exception $e) {
+                }
+            }
 
-			echo __FUNCTION__ . 'Элементов не найдено' . PHP_EOL;
-			echo __FUNCTION__ . 'Exception: ' . $e->getMessage() . PHP_EOL;
+        } catch (Exception $e) {
 
-		}
+            echo __FUNCTION__ . 'Элементов не найдено' . PHP_EOL;
+            echo __FUNCTION__ . 'Exception: ' . $e->getMessage() . PHP_EOL;
 
-		return $this;
+        }
 
-	}
+        return $this;
+    }
 
-	public function scrollDown($startHeight)
-	{
-		$bodyScrollHeight = $this->driver->executeScript("return document.body.scrollHeight");
+    public function readArticle($startHeight)
+    {
+        $bodyScrollHeight = $this->driver->executeScript("return document.body.scrollHeight");
 
-		$innerHeight = $this->driver->executeScript("return window.innerHeight + window.scrollY") + 500;
-		$offsetHeight = $this->driver->executeScript("return document.body.offsetHeight");
+        $innerHeight = $this->driver->executeScript("return window.innerHeight + window.scrollY") + 500;
+        $offsetHeight = $this->driver->executeScript("return document.body.offsetHeight");
 
-		while ($startHeight < $offsetHeight) {
+        while ($startHeight < $offsetHeight) {
 
-			$this->clickToADS();
+            $randScrollLength = rand(100, 600);
+            $startHeight += $randScrollLength;
 
-			$randScrollLength = rand(100, 600);
-			$startHeight += $randScrollLength;
+            $scrollReverse = rand(1, 100);
 
-			$scrollReverse = rand(1, 100);
+            if ($scrollReverse > 90) {
+                $minus = '-';
+                $startHeight -= $randScrollLength * 1.6;
 
-			if ($scrollReverse > 90) {
-				$minus = '-';
-				$startHeight -= $randScrollLength * 1.6;
+            } else {
+                $minus = '';
+            }
 
-			} else {
-				$minus = '';
-			}
+            // echo $scrollReverse . PHP_EOL;
 
-			// echo $scrollReverse . PHP_EOL;
+            $this->driver->executeScript("window.scrollBy(0," . $minus . $randScrollLength . ")");
 
-			$this->driver->executeScript("window.scrollBy(0," . $minus . $randScrollLength . ")");
+            // echo '--startHeight--';
+            // var_dump($startHeight) . PHP_EOL;
+            // echo '--bodyScrollHeight--';
+            // var_dump($bodyScrollHeight) . PHP_EOL;
 
-			// echo '--startHeight--';
-			// var_dump($startHeight) . PHP_EOL;
-			// echo '--bodyScrollHeight--';
-			// var_dump($bodyScrollHeight) . PHP_EOL;
+            usleep(mt_rand(200000, 5000000));
+        }
 
-			usleep(mt_rand(200000, 5000000));
+        return $this;
+    }
 
-		}
+    public function findRandomArticlesInFooter($count = 1)
+    {
+        $innerCount = 0;
 
-		return $this;
+        while ($count > $innerCount) {
 
-	}
+            $elements = $this->driver->findElements(WebDriverBy::xpath("//ul[contains(@class, 'random-posts')]//a"));
 
-	public function findRandomArticlesInFooter($count = 1)
-	{
+            $rand = array_rand($elements);
+            $randomElement = $elements[$rand];
 
-		$innerCount = 0;
+            echo $randomElement->findElement(WebDriverBy::xpath(".//span[contains(@class, 'text-lines-1')]"))->getText() . PHP_EOL;
 
-		while ($count > $innerCount) {
+            try {
 
-			$elements = $this->driver->findElements(WebDriverBy::xpath("//ul[contains(@class, 'random-posts')]//a"));
+                usleep(mt_rand(500000, 3000000));
+                $this->driver->action()->moveToElement($randomElement)->perform();
 
-			$rand = array_rand($elements);
-			$randomElement = $elements[$rand];
+                usleep(mt_rand(100000, 800000));
+                $randomElement->click();
 
-			echo $randomElement->getText() . PHP_EOL;
+                echo __FUNCTION__ . ' Проход по случайным ссылкам из подвала: ' . ++$innerCount . PHP_EOL;
 
-			try {
+            } catch (Exception $exception) {
 
-				usleep(mt_rand(500000, 3000000));
-				$this->driver->action()->moveToElement($randomElement)->perform();
+                echo $exception->getMessage() . PHP_EOL;
 
-				usleep(mt_rand(100000, 800000));
-				$randomElement->click();
+                usleep(mt_rand(500000, 3000000));
+                $this->oneScrollDown();
 
-				echo __FUNCTION__ . ' Проход по случайным ссылкам из подвала: ' . ++$innerCount . PHP_EOL;
+            }
 
-			} catch (Exception $exception) {
+            usleep(mt_rand(500000, 3000000));
 
-				echo $exception->getMessage() . PHP_EOL;
+            $this->readArticle($this->driver->executeScript("return window.innerHeight + window.scrollY"));
+        }
 
-				usleep(mt_rand(500000, 3000000));
-				$this->oneScrollDown();
+        return $this;
+    }
 
-			}
+    private function oneScrollDown()
+    {
+        $startHeight = 0;
 
-			usleep(mt_rand(500000, 3000000));
+        $randScrollLength = rand(200, 800);
+        $startHeight += $randScrollLength;
+        $this->driver->executeScript("window.scrollBy(0," . $randScrollLength . ")");
 
-			$this->scrollDown($this->driver->executeScript("return window.innerHeight + window.scrollY"));
-
-		}
-
-		return $this;
-
-	}
-
-	private function oneScrollDown()
-	{
-
-		$startHeight = 0;
-
-		$randScrollLength = rand(200, 800);
-		$startHeight += $randScrollLength;
-		$this->driver->executeScript("window.scrollBy(0," . $randScrollLength . ")");
-
-		usleep(mt_rand(200000, 3000000));
-	}
-
-	public function clickToADS()
-	{
-
-		try {
-			$yandexAds = $this->driver->wait(2, 300)->until(
-				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath("//div[contains(@id,'yandex_rtb_R-A-1982030-5')]"))
-			);
-
-			$this->driver->action()->moveToElement($yandexAds, 20, 20)->perform();
-
-			sleep(rand(1, 3));
-			$yandexAds->click();
-
-			$this->scrollDown(0);
-
-		} catch (Exception $exception) {
-			echo __FUNCTION__ . ' Рекламного блока не видно ' . PHP_EOL;
-			echo $exception->getMessage() . PHP_EOL;
-		}
-
-		return;
-
-	}
+        usleep(mt_rand(200000, 3000000));
+    }
 }
