@@ -2,13 +2,12 @@
 
 use App\GoLogin;
 
-use App\Projects\MailRu\Tasks\RegisterAccount;
 use App\Projects\YandexPartner\SalambaRu\Example\GoLoginProfile;
 use App\Projects\YandexPartner\SalambaRu\Example\ProxyTask;
 use App\Projects\YandexPartner\SalambaRu\Pages\FrontPage;
 use Dotenv\Dotenv;
 
-require_once '/Volumes/SSD256/www/selenium-parse/vendor/autoload.php';
+require_once '../../../../../vendor/autoload.php';
 
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
@@ -39,7 +38,7 @@ $goSerf = new FrontPage($driver);
 $goSerf->openPage('https://salamba.ru')
 	   ->searchAndClickRandomArticle()
 	   ->scrollDown(0)
-	   ->findRandomArticlesInFooter(3);
+	   ->findRandomArticlesInFooter();
 
 sleep(rand(5, 15));
 

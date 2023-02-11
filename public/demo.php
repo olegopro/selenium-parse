@@ -25,7 +25,7 @@ $chromeOptions->addArguments(['window-size=800,600']);
 $capabilities = DesiredCapabilities::chrome();
 $capabilities->setCapability(ChromeOptions::CAPABILITY_W3C, $chromeOptions);
 
-putenv('WEBDRIVER_CHROME_DRIVER=/Users/evilgazz/Downloads/chromedriver105');
+putenv('WEBDRIVER_CHROME_DRIVER=/Users/evilgazz/Downloads/chromedriver109');
 $driver = ChromeDriver::start();
 
 $devTools = new ChromeDevToolsDriver($driver);
