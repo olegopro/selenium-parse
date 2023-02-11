@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Projects\YandexPartner\SalambaRu\Pages;
+namespace App\Projects\WebWalker\SalambaRu\Pages;
 
 use Exception;
 use Facebook\WebDriver\Remote\RemoteWebElement;
@@ -22,7 +22,6 @@ class FrontPage extends Page
 
 	public function searchAndClickRandomArticle()
 	{
-
 		$this->driver->wait()->until(function () {
 			return $this->driver->executeScript('return document.readyState') === 'complete';
 		});

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Projects\YandexPartner\SalambaRu\Pages;
+namespace App\Projects\WebWalker\SalambaRu\Pages;
 
 use App\Helpers\humanSimulations;
 use Facebook\WebDriver\Remote\RemoteWebDriver;

@@ -2,9 +2,9 @@
 
 use App\GoLogin;
 
-use App\Projects\YandexPartner\SalambaRu\Example\GoLoginProfile;
-use App\Projects\YandexPartner\SalambaRu\Example\ProxyTask;
-use App\Projects\YandexPartner\SalambaRu\Pages\FrontPage;
+use App\Projects\WebWalker\SalambaRu\Example\GoLoginProfile;
+use App\Projects\WebWalker\SalambaRu\Example\ProxyTask;
+use App\Projects\WebWalker\SalambaRu\Pages\FrontPage;
 use Dotenv\Dotenv;
 
 require_once '../../../../../vendor/autoload.php';

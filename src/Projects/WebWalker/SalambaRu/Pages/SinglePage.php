@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Projects\YandexPartner\SalambaRu\Pages;
+namespace App\Projects\WebWalker\SalambaRu\Pages;
 
 class SinglePage
 {

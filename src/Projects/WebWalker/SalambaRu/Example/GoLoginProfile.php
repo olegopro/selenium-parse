@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Projects\YandexPartner\SalambaRu\Example;
+namespace App\Projects\WebWalker\SalambaRu\Example;
 
 use App\GoLogin;
 use Exception;

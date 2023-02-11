@@ -35,7 +35,7 @@ composer.phar
 # composer.lock
 
 ### dotenv ###
-src/Projects/YandexPartner/SalambaRu/Example/.env
+src/Projects/WebWalker/SalambaRu/Example/.env
 
 ### JetBrains ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and WebStorm
