@@ -36,8 +36,12 @@ $driver = $GoLogin->runOrbitaBrowser($debugger_address);
 
 $goSerf = new FrontPage($driver);
 
-$goSerf->openPage('file:///Users/evilgazz/Downloads/salamba.html')
-	   ->searchAndClickRandomArticle()
+// $goSerf->openPage('file:///Users/evilgazz/Downloads/salamba.html')
+// 	   ->searchAndClickRandomArticle()
+// 	   ->readArticle(0)
+// 	   ->findRandomArticlesInFooter();
+
+$goSerf->openFromVk('https://vk.com/salamba_ru')
 	   ->readArticle(0)
 	   ->findRandomArticlesInFooter();
 

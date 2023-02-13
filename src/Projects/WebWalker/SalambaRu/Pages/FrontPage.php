@@ -3,7 +3,9 @@
 namespace App\Projects\WebWalker\SalambaRu\Pages;
 
 use Exception;
-use Facebook\WebDriver\Remote\RemoteWebElement;
+use Facebook\WebDriver\Exception\ElementClickInterceptedException;
+use Facebook\WebDriver\Exception\WebDriverException;
+use Facebook\WebDriver\WebDriver;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverElement;
 use Facebook\WebDriver\WebDriverExpectedCondition;
@@ -13,6 +15,72 @@ class FrontPage extends Page
     public function openPage($url)
     {
         $this->driver->get($url);
+
+        return $this;
+    }
+
+    public function openFromVk($url)
+    {
+        $this->driver->get($url);
+
+        $this->driver->wait()->until(function () {
+            return $this->driver->executeScript('return document.readyState') === 'complete';
+        });
+
+        echo 'Собираем все ссылки на посты: ' . __FUNCTION__ . '()' . PHP_EOL;
+
+        $randomElement = null;
+        try {
+
+            $this->scrollDown(3);
+
+            sleep(5);
+
+            $element = WebDriverBy::xpath("//button[contains(@class, 'UnauthActionBox__close')]");
+
+            $this->driver->wait()->until(
+                WebDriverExpectedCondition::visibilityOfElementLocated($element)
+            );
+
+            $remoteElement = $this->driver->findElement($element);
+            $this->driver->action()->moveToElement($remoteElement)->perform();
+            $remoteElement->click();
+
+            echo __FUNCTION__ . '() - ' . 'Закрываем окно для авторизации';
+
+            $this->scrollDown(3);
+            sleep(5);
+
+            $elements = $this->driver->findElements(WebDriverBy::xpath("//a[contains(@class, 'media_link__media')]"));
+
+            $rand = array_rand($elements);
+            $randomElement = $elements[$rand];
+
+            sleep(5);
+            $this->scrollDown(10);
+
+            try {
+
+                $this->driver->action()->moveToElement($randomElement)->perform();
+                $randomElement->click();
+
+            } catch (Exception $exception) {
+
+                echo $exception->getMessage();
+
+                $this->driver->executeScript("arguments[0].scrollIntoView(true);", [$randomElement]);
+
+                sleep(3);
+                $this->driver->action()->moveToElement($randomElement)->perform();
+                $randomElement->click();
+
+            }
+
+        } catch (Exception $exception) {
+
+            echo $exception->getMessage();
+
+        }
 
         return $this;
     }
@@ -56,7 +124,7 @@ class FrontPage extends Page
                     $message = preg_replace('/(\s*)(\(.*\))(\s*)/', '', $exception->getMessage());
                     echo __FUNCTION__ . '() - ' . $message . PHP_EOL;
 
-                    $this->oneScrollDown();
+                    $this->scrollDown();
 
                 }
             }
@@ -136,7 +204,7 @@ class FrontPage extends Page
                 echo $exception->getMessage() . PHP_EOL;
 
                 usleep(mt_rand(500000, 3000000));
-                $this->oneScrollDown();
+                $this->scrollDown();
 
             }
 
@@ -148,14 +216,20 @@ class FrontPage extends Page
         return $this;
     }
 
-    private function oneScrollDown()
+    private function scrollDown($count = 1)
     {
-        $startHeight = 0;
+        $innerCount = 0;
+        $height = 0;
 
-        $randScrollLength = rand(200, 800);
-        $startHeight += $randScrollLength;
-        $this->driver->executeScript("window.scrollBy(0," . $randScrollLength . ")");
+        while ($count > $innerCount) {
+            $randScrollLength = rand(200, 800);
+            $height += $randScrollLength;
+            $this->driver->executeScript("window.scrollBy(0," . $height . ")");
 
-        usleep(mt_rand(200000, 3000000));
+            usleep(mt_rand(200000, 3000000));
+            $innerCount++;
+
+            sleep(rand(1,5));
+        }
     }
 }
