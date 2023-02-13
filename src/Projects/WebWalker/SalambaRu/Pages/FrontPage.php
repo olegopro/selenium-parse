@@ -22,63 +22,33 @@ class FrontPage extends Page
     public function openFromVk($url)
     {
         $this->driver->get($url);
+        $this->waitAfterLoad(3);
 
-        $this->driver->wait()->until(function () {
-            return $this->driver->executeScript('return document.readyState') === 'complete';
-        });
+        $this->closeAuthModal();
 
-        echo 'Собираем все ссылки на посты: ' . __FUNCTION__ . '()' . PHP_EOL;
+        $this->scrollDown(5);
+        $elements = $this->driver->findElements(WebDriverBy::xpath("//a[contains(@class, 'media_link__media')]"));
+        echo __FUNCTION__ . '() - ' . 'Собираем все ссылки на посты' . PHP_EOL;
 
-        $randomElement = null;
+        $rand = array_rand($elements);
+        $randomElement = $elements[$rand];
+
+        sleep(rand(1, 10));
+
         try {
 
-            $this->scrollDown(3);
-
-            sleep(5);
-
-            $element = WebDriverBy::xpath("//button[contains(@class, 'UnauthActionBox__close')]");
-
-            $this->driver->wait()->until(
-                WebDriverExpectedCondition::visibilityOfElementLocated($element)
-            );
-
-            $remoteElement = $this->driver->findElement($element);
-            $this->driver->action()->moveToElement($remoteElement)->perform();
-            $remoteElement->click();
-
-            echo __FUNCTION__ . '() - ' . 'Закрываем окно для авторизации';
-
-            $this->scrollDown(3);
-            sleep(5);
-
-            $elements = $this->driver->findElements(WebDriverBy::xpath("//a[contains(@class, 'media_link__media')]"));
-
-            $rand = array_rand($elements);
-            $randomElement = $elements[$rand];
-
-            sleep(5);
-            $this->scrollDown(10);
-
-            try {
-
-                $this->driver->action()->moveToElement($randomElement)->perform();
-                $randomElement->click();
-
-            } catch (Exception $exception) {
-
-                echo $exception->getMessage();
-
-                $this->driver->executeScript("arguments[0].scrollIntoView(true);", [$randomElement]);
-
-                sleep(3);
-                $this->driver->action()->moveToElement($randomElement)->perform();
-                $randomElement->click();
-
-            }
+            $this->driver->action()->moveToElement($randomElement)->perform();
+            $randomElement->click();
 
         } catch (Exception $exception) {
 
             echo $exception->getMessage();
+
+            $this->driver->executeScript("arguments[0].scrollIntoView(true);", [$randomElement]);
+
+            sleep(rand(1, 5));
+            $this->driver->action()->moveToElement($randomElement)->perform();
+            $randomElement->click();
 
         }
 
@@ -139,14 +109,15 @@ class FrontPage extends Page
         return $this;
     }
 
-    public function readArticle($startHeight)
+    public function readArticle($startHeight = 0)
     {
-        $bodyScrollHeight = $this->driver->executeScript("return document.body.scrollHeight");
+        $this->driver->switchTo()->window($this->driver->getWindowHandles()[1]);
+        $this->waitAfterLoad(3);
 
-        $innerHeight = $this->driver->executeScript("return window.innerHeight + window.scrollY") + 500;
-        $offsetHeight = $this->driver->executeScript("return document.body.offsetHeight");
+        $bodyHeight = $this->driver->executeScript('return document.body.scrollHeight');
+        $innerHeight = $this->driver->executeScript('return window.innerHeight + window.scrollY');
 
-        while ($startHeight < $offsetHeight) {
+        while ($startHeight < $bodyHeight) {
 
             $randScrollLength = rand(100, 600);
             $startHeight += $randScrollLength;
@@ -154,21 +125,20 @@ class FrontPage extends Page
             $scrollReverse = rand(1, 100);
 
             if ($scrollReverse > 90) {
-                $minus = '-';
-                $startHeight -= $randScrollLength * 1.6;
-
+                $direction = '-';
+                $startHeight -= $randScrollLength * 1.5;
             } else {
-                $minus = '';
+                $direction = null;
             }
 
-            // echo $scrollReverse . PHP_EOL;
-
-            $this->driver->executeScript("window.scrollBy(0," . $minus . $randScrollLength . ")");
+            $this->driver->executeScript('window.scrollBy(0,' . $direction . $randScrollLength . ')');
 
             // echo '--startHeight--';
             // var_dump($startHeight) . PHP_EOL;
             // echo '--bodyScrollHeight--';
-            // var_dump($bodyScrollHeight) . PHP_EOL;
+            // var_dump($bodyHeight) . PHP_EOL;
+            // echo '--innerHeight--';
+            // var_dump($innerHeight) . PHP_EOL;
 
             usleep(mt_rand(200000, 5000000));
         }
@@ -222,14 +192,38 @@ class FrontPage extends Page
         $height = 0;
 
         while ($count > $innerCount) {
+            usleep(mt_rand(200000, 3000000));
+
             $randScrollLength = rand(200, 800);
             $height += $randScrollLength;
             $this->driver->executeScript("window.scrollBy(0," . $height . ")");
 
-            usleep(mt_rand(200000, 3000000));
             $innerCount++;
-
-            sleep(rand(1,5));
         }
+    }
+
+    private function closeAuthModal()
+    {
+        try {
+
+            echo __FUNCTION__ . '() - ' . 'Ищем модальное окно авторизации' . PHP_EOL;
+            $modalCloseButton = $this->driver->findElement(WebDriverBy::xpath("//button[contains(@class, 'UnauthActionBox__close')]"));
+
+            sleep(rand(1, 5));
+            $this->driver->action()->moveToElement($modalCloseButton)->perform();
+            $modalCloseButton->click();
+            echo __FUNCTION__ . '() - ' . 'Закрываем модальное авторизации' . PHP_EOL;
+
+        } catch (Exception $exception) {
+
+            echo __FUNCTION__ . '() - ' . 'Модальное окно не найдено' . PHP_EOL;
+
+            $this->scrollDown();
+            echo __FUNCTION__ . '() - ' . 'Скролим вниз' . PHP_EOL;
+
+            $this->closeAuthModal();
+
+        }
+
     }
 }

@@ -35,19 +35,16 @@ $debugger_address = $orbita->start();
 $driver = $GoLogin->runOrbitaBrowser($debugger_address);
 
 $goSerf = new FrontPage($driver);
-
-// $goSerf->openPage('file:///Users/evilgazz/Downloads/salamba.html')
-// 	   ->searchAndClickRandomArticle()
-// 	   ->readArticle(0)
-// 	   ->findRandomArticlesInFooter();
-
 $goSerf->openFromVk('https://vk.com/salamba_ru')
-	   ->readArticle(0)
-	   ->findRandomArticlesInFooter();
+       ->readArticle();
 
-sleep(rand(5, 15));
+$allTabs = $driver->getWindowHandles();
+foreach (array_reverse($allTabs) as $tab) {
+    sleep(rand(1, 5));
+    $driver->switchTo()->window($tab);
+    $driver->close();
+}
 
-$driver->close();
 $orbita->stop();
 
 sleep(10);
