@@ -112,14 +112,26 @@ class FrontPage extends Page
     public function readArticle($startHeight = 0)
     {
         $this->driver->switchTo()->window($this->driver->getWindowHandles()[1]);
-        $this->waitAfterLoad(3);
+        $this->waitAfterLoad(rand(1, 5));
 
         $bodyHeight = $this->driver->executeScript('return document.body.scrollHeight');
         $innerHeight = $this->driver->executeScript('return window.innerHeight + window.scrollY');
 
+        $startTimer = time();
+
         while ($startHeight < $bodyHeight) {
 
             $randScrollLength = rand(100, 600);
+
+            switch (true) {
+                case ($startTimer + 60 < time()):
+                    $randScrollLength = $randScrollLength * 2;
+                    break;
+                case ($startTimer + 120 < time()):
+                    $randScrollLength = $randScrollLength * 3;
+                    break;
+            }
+
             $startHeight += $randScrollLength;
 
             $scrollReverse = rand(1, 100);
