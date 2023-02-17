@@ -32,28 +32,62 @@ class GoLoginProfile
 
     public function createProfile($proxyData = [])
     {
+
+        $osList = [
+            'win' => [
+                'os'       => 'win',
+                'platform' => 'Win32'
+            ],
+
+            'mac' => [
+                'os'       => 'mac',
+                'platform' => 'MacIntel'
+            ],
+
+            'lin' => [
+                'os'       => 'mac',
+                'platform' => 'Linux x86_64'
+            ]
+        ];
+
+        $selector = rand(1, 100);
+        $os = [];
+
+        switch (true) {
+            case ($selector < 70):
+                $os = $osList['win'];
+                break;
+            case ($selector <= 90):
+                $os = $osList['mac'];
+                break;
+            default:
+                $os = $osList['lin'];
+                break;
+        }
+
         try {
             return
                 $profile_id = $this->gl->create([
-                        'name'      => 'profile_mac',
-                        'os'        => 'mac',
+                        'name'      => 'profile-' . $os['os'],
+                        'os'        => $os['os'],
                         'navigator' => [
-                            'language'   => 'ru-RU,en-US',
+                            'language'   => 'ru-RU',
                             'userAgent'  => 'random',
                             'resolution' => 'random',
-                            'platform'   => 'mac'
+                            'platform'   => $os['platform']
                         ],
 
-                        'proxyEnabled' => true,
-                        'proxy'        => [
-                            'mode' => 'none',
-                            // 'autoProxyRegion' => 'us'
-                            // 'host'            => '',
-                            // 'port'            => '',
-                            // 'username'        => '',
-                            // 'password'        => '',
-                        ],
-                        'webRTC'       => [
+                        // 'proxyEnabled' => true,
+                        // 'proxy'        => [
+                        //     'mode' => 'none',
+                        //     // 'autoProxyRegion' => 'us'
+                        //     // 'host'            => '',
+                        //     // 'port'            => '',
+                        //     // 'username'        => '',
+                        //     // 'password'        => '',
+                        // ],
+
+                        'webRTC' => [
                             'mode'    => 'alerted',
                             'enabled' => true
                         ],
@@ -71,14 +105,12 @@ class GoLoginProfile
 
     public function setOrbitaBrowser($profile_id)
     {
-
         return (new GoLogin([
             'token'        => $_ENV['TOKEN'],
             'profile_id'   => $profile_id,
             'port'         => GoLogin::getRandomPort(),
             'extra_params' => ['--lang=ru']
         ]));
-
     }
 
     public function runOrbitaBrowser($debugger_address)

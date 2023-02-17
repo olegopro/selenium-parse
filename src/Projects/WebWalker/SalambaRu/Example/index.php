@@ -1,7 +1,5 @@
 <?php
 
-use App\GoLogin;
-
 use App\Projects\WebWalker\SalambaRu\Example\GoLoginProfile;
 use App\Projects\WebWalker\SalambaRu\Example\ProxyTask;
 use App\Projects\WebWalker\SalambaRu\Pages\FrontPage;
@@ -22,8 +20,7 @@ $GoLogin = new GoLoginProfile;
 // 	'task_proxy_password' => 'password'
 // ]);
 
-// $profile_id = $GoLogin->createProfile();
-$profile_id = '63e7166f351ae696260fc2ed';
+$profile_id = $GoLogin->createProfile();
 
 echo 'profile id = ' . $profile_id . PHP_EOL;
 $profile = $GoLogin->gl->getProfile($profile_id);
@@ -36,7 +33,8 @@ $driver = $GoLogin->runOrbitaBrowser($debugger_address);
 
 $goSerf = new FrontPage($driver);
 $goSerf->openFromVk('https://vk.com/salamba_ru')
-       ->readArticle();
+       ->readArticle()
+       ->findRandomArticlesInFooter(rand(0,3));
 
 $allTabs = $driver->getWindowHandles();
 foreach (array_reverse($allTabs) as $tab) {
@@ -48,4 +46,4 @@ foreach (array_reverse($allTabs) as $tab) {
 $orbita->stop();
 
 sleep(10);
-// $GoLogin->gl->delete($profile_id);
+$GoLogin->gl->delete($profile_id);
