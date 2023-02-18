@@ -125,10 +125,18 @@ class FrontPage extends Page
 
             switch (true) {
                 case ($startTimer + 60 < time()):
-                    $randScrollLength = $randScrollLength * 2;
+                    $randScrollLength = $randScrollLength * 5;
+                    echo 'Скролл ускорен 5x' . PHP_EOL;
                     break;
-                case ($startTimer + 120 < time()):
+
+                case ($startTimer + 30 < time()):
                     $randScrollLength = $randScrollLength * 3;
+                    echo 'Скролл ускорен 3x' . PHP_EOL;
+                    break;
+
+                case ($startTimer + 15 < time()):
+                    $randScrollLength = $randScrollLength * 2;
+                    echo 'Скролл ускорен 2x' . PHP_EOL;
                     break;
             }
 
