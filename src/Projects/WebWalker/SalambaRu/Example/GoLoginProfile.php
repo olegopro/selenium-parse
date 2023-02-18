@@ -45,7 +45,7 @@ class GoLoginProfile
             ],
 
             'lin' => [
-                'os'       => 'mac',
+                'os'       => 'lin',
                 'platform' => 'Linux x86_64'
             ]
         ];
